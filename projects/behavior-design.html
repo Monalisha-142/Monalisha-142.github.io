@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Behavior Design · S Monalisha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400..500&family=Beiruti:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* A project page, blank for now. The header is About me's (Figma "Frame 9"):
+     the monogram, the fine line and the name, which take you home. */
+  :root { --u: calc(100vw / 1440); }
+  html, body { margin: 0; background: #000000; color: #ffffff; }
+  body { font-family: 'Afacad', system-ui, sans-serif; opacity: 0; animation: arrive .6s ease .05s forwards; }
+  @keyframes arrive { to { opacity: 1; } }
+  body.leaving { opacity: 1; animation: none; transition: opacity .45s ease; }
+  body.leaving.gone { opacity: 0; }
+
+  header { position: sticky; top: 0; height: calc(79 * var(--u)); background: #000000; z-index: 1; }
+  .home { position: absolute; inset: 0 auto 0 0; width: calc(330 * var(--u)); color: inherit; text-decoration: none; }
+  .mono { position: absolute; left: calc(43 * var(--u)); top: calc(44 * var(--u)); width: calc(51 * var(--u)); height: calc(29 * var(--u)); overflow: visible; }
+  .mono path { fill: none; stroke: #f0d7ae; stroke-width: 7.35; stroke-linecap: round; stroke-linejoin: round; }
+  .divider { position: absolute; left: calc(95 * var(--u)); top: calc(49 * var(--u)); width: 1px; height: calc(18 * var(--u)); background: #ebeae6; }
+  .name {
+    position: absolute; left: calc(115 * var(--u)); top: calc(12 * var(--u)); margin: 0;
+    font: 500 calc(32 * var(--u))/calc(90 * var(--u)) 'Beiruti', system-ui, sans-serif; letter-spacing: .13em; white-space: nowrap;
+  }
+  .back {
+    position: absolute; right: calc(58 * var(--u)); top: calc(46 * var(--u));
+    font: 400 calc(17 * var(--u))/1 'Afacad', system-ui, sans-serif; letter-spacing: .04em;
+    color: #ffffff; text-decoration: none; transition: color .35s ease;
+  }
+  .back:hover, .back:focus-visible { color: #ebcea0; }
+
+  main { padding: calc(110 * var(--u)) calc(115 * var(--u)) calc(160 * var(--u)); }
+  h1 { margin: 0; font: 500 calc(55 * var(--u))/calc(58 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .04em; }
+  .lede { margin: calc(18 * var(--u)) 0 0; max-width: calc(551 * var(--u)); font: 500 calc(20 * var(--u))/calc(27 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .04em; color: #959292; }
+  .cover { margin-top: calc(56 * var(--u)); height: calc(560 * var(--u)); background: #d9d9d9; }
+
+  @media (max-width: 760px) {
+    header { height: 64px; }
+    .home { width: 240px; }
+    .mono { left: 16px; top: 22px; width: 36px; height: 21px; }
+    .divider { left: 60px; top: 24px; height: 16px; }
+    .name { left: 72px; top: 0; font-size: 22px; line-height: 64px; }
+    .back { right: 16px; top: 24px; font-size: 15px; }
+    main { padding: 48px 16px 96px; }
+    h1 { font-size: 34px; line-height: 40px; }
+    .lede { font-size: 16px; line-height: 23px; }
+    .cover { margin-top: 32px; height: 56vw; }
+  }
+  @media (prefers-reduced-motion: reduce) { body { animation-duration: .01s; } }
+</style>
+</head>
+<body>
+  <header>
+    <a class="home" href="../index.html#home" aria-label="S Monalisha, home">
+      <svg class="mono" aria-hidden="true"><path id="mono-line" d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg>
+      <span class="divider" aria-hidden="true"></span>
+      <span class="name">S MONALISHA</span>
+    </a>
+    <a class="back" href="../index.html#all-projects">← All projects</a>
+  </header>
+  <main>
+    <h1>Behavior Design</h1>
+    <p class="lede">This project page is being put together.</p>
+    <div class="cover" role="img" aria-label="Project image (coming soon)"></div>
+  </main>
+<script>
+  // the monogram's traced line, fitted to its box as on the main page
+  const line = document.getElementById('mono-line'), b = line.getBBox(), pad = 2.5;
+  line.ownerSVGElement.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`);
+  // home and back go to the main page that opened this one (Portfolio final,
+  // or an older version being compared)
+  let home = 'index.html';
+  try {
+    const from = document.referrer.includes('/projects/') ? null : (document.referrer.match(/\/([^\/?#]+\.html)(?:[?#]|$)/) || [])[1];
+    if (from) sessionStorage.setItem('home', from);
+    home = sessionStorage.getItem('home') || home;
+  } catch (e) {}
+  document.querySelectorAll('a.home, a.back').forEach(a => { a.href = '../' + home + a.getAttribute('href').replace(/^[^#]+/, ''); });
+  // leaving: fade out, then go
+  document.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    document.body.classList.add('leaving');
+    requestAnimationFrame(() => document.body.classList.add('gone'));
+    setTimeout(() => { location.href = a.href; }, 450);
+  }));
+  addEventListener('pageshow', () => document.body.classList.remove('leaving', 'gone'));
+</script>
+</body>
+</html>
