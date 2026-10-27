@@ -1201,14 +1201,27 @@
     const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
     nudge(e.deltaY * unit);
   }, { passive: false });
-  let touchY = null;
-  addEventListener('touchstart', e => { touchY = live() && e.touches[0].clientY >= HEADER_BAND * innerWidth / 1440 ? e.touches[0].clientY : null; }, { passive: true });
+  // On a touch screen one swipe is one page: the page follows the finger (half
+  // a screen of travel is a whole page), and on letting go it carries on to
+  // the next page if the finger moved more than a flick, else it settles back
+  let touchY = null, touchFrom = 0, touchMoved = 0;
+  const FLICK = 36;                        // px of finger travel that counts as a swipe
+  addEventListener('touchstart', e => {
+    touchY = live() && e.touches[0].clientY >= HEADER_BAND * innerWidth / 1440 ? e.touches[0].clientY : null;
+    touchFrom = Math.round(pageAim); touchMoved = 0;
+  }, { passive: true });
   addEventListener('touchmove', e => {
     if (touchY === null) return;
     const y = e.touches[0].clientY;
-    nudge((touchY - y) * SCROLL_PER_VIEW); touchY = y;   // on a phone the page keeps up with the finger
+    touchMoved += touchY - y; touchY = y;
+    const span = stepSpan(touchMoved > 0 ? touchFrom : touchFrom - 1) / SCROLL_PER_VIEW * .5;
+    pageAim = clamp(touchFrom + clamp(touchMoved / span, -1, 1), 0, LAST); holding = false;
   }, { passive: true });
-  addEventListener('touchend', () => { touchY = null; });
+  addEventListener('touchend', () => {
+    if (touchY === null) return;
+    touchY = null;
+    goTo(clamp(touchFrom + (Math.abs(touchMoved) > FLICK ? Math.sign(touchMoved) : 0), 0, LAST));
+  });
   addEventListener('keydown', e => {
     if (!live()) return;
     if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); goTo(Math.min(LAST, Math.floor(pageAim + .02) + 1)); }
@@ -1525,6 +1538,13 @@
   applyPage(0);
   requestAnimationFrame(tick);
   addEventListener('resize', () => applyPage(page));
+
+  // on a phone the logos sit just under the About me text, however far it runs
+  const strip = document.querySelector('.strip');
+  const placeStrip = () => { strip.style.top = innerWidth <= 760 ? (body.offsetTop + body.offsetHeight + 18) + 'px' : ''; };
+  placeStrip();
+  addEventListener('resize', placeStrip);
+  document.fonts.ready.then(placeStrip);
 
   // Everything that plays once a visit puts itself back here for "Replay
   // intro"; each section added later adds its own
