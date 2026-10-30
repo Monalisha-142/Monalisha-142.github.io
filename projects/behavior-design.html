@@ -3,91 +3,246 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Behavior Design · S Monalisha</title>
+<title>Rules, Rituals &amp; the Mid-Day Meal · S Monalisha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400..500&family=Beiruti:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  /* A project page, blank for now. The header is About me's (Figma "Frame 9"):
-     the monogram, the fine line and the name, which take you home. */
-  :root { --u: calc(100vw / 1440); }
-  html, body { margin: 0; background: #000000; color: #ffffff; }
-  body { font-family: 'Afacad', system-ui, sans-serif; opacity: 0; animation: arrive .6s ease .05s forwards; }
-  @keyframes arrive { to { opacity: 1; } }
-  body.leaving { opacity: 1; animation: none; transition: opacity .45s ease; }
-  body.leaving.gone { opacity: 0; }
+  /* The Human Behavior case study (Figma "Human behavior project" › Frame 82), under the Behavior Design card.
+     Desktop: the Ecotourism header (light bar, same sizes) in this study's brown, with reading progress. Inside a behavior, the other chapters shrink to
+     icons and that behavior's own steps open on the right. Phone: a chapter dropdown.
+     The case study itself is a picture of the Figma frame (1409 × 22911), without its own Nav. */
+  :root { --bg: #fbf8f0; --ink: #3d2a14; --brown: #834e17; --soft: #7d5326; --line: rgba(131, 78, 23, .25); }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }   /* no font boosting on phones */
+  html, body { margin: 0; background: #fff; color: var(--ink); }
+  body { font-family: 'Roboto', system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
 
-  header { position: sticky; top: 0; height: calc(79 * var(--u)); background: #000000; z-index: 1; }
-  .home { position: absolute; inset: 0 auto 0 0; width: calc(330 * var(--u)); color: inherit; text-decoration: none; }
-  .mono { position: absolute; left: calc(43 * var(--u)); top: calc(44 * var(--u)); width: calc(51 * var(--u)); height: calc(29 * var(--u)); overflow: visible; }
-  .mono path { fill: none; stroke: #f0d7ae; stroke-width: 7.35; stroke-linecap: round; stroke-linejoin: round; }
-  .divider { position: absolute; left: calc(95 * var(--u)); top: calc(49 * var(--u)); width: 1px; height: calc(18 * var(--u)); background: #ebeae6; }
-  .name {
-    position: absolute; left: calc(115 * var(--u)); top: calc(12 * var(--u)); margin: 0;
-    font: 500 calc(32 * var(--u))/calc(90 * var(--u)) 'Beiruti', system-ui, sans-serif; letter-spacing: .13em; white-space: nowrap;
+  /* the case study: the Figma frame, 1409 × 22911, in pieces */
+  .study { position: relative; }
+  .study img { display: block; width: 100%; height: auto; }
+  .anchor { position: absolute; left: 0; width: 1px; height: 1px; top: calc(var(--y) / 22911 * 100%); }
+
+  /* ---- the bar ---- */
+  .bar {
+    position: fixed; inset: 0 0 auto 0; height: 57.6px; z-index: 10; display: flex; align-items: center; gap: 19.8px; padding: 0 36px;
+    background: transparent; transition: background .35s ease, box-shadow .35s ease;
   }
-  .back {
-    position: absolute; right: calc(58 * var(--u)); top: calc(46 * var(--u));
-    font: 400 calc(17 * var(--u))/1 'Afacad', system-ui, sans-serif; letter-spacing: .04em;
-    color: #ffffff; text-decoration: none; transition: color .35s ease;
+  .bar.solid { background: rgba(251, 248, 240, .94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+  .home { display: flex; align-items: center; gap: 12.6px; flex-shrink: 0; }
+  .mono { width: 36px; height: 20.7px; overflow: visible; }
+  .mono path { fill: none; stroke: var(--brown); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
+  .home .sep { width: 1px; height: 16.2px; background: var(--line); }
+  .back { font-size: 10.8px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: var(--soft); transition: color .25s; }
+  .back:hover, .back:focus-visible { color: var(--brown); }
+  .progress { position: absolute; left: 0; bottom: 0; height: 1.4px; width: 100%; background: var(--soft); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* ---- the chapters, along the right of the bar ---- */
+  .desk { margin-left: auto; }
+  .chapters, .sub { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
+  .chapters { position: relative; gap: 23.4px; }
+  .chapters > li { display: flex; align-items: center; }
+  .chapters a { display: flex; align-items: center; padding: 7.2px 0; font-size: 10.8px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--soft); opacity: .85; white-space: nowrap; transition: color .25s, opacity .25s; }
+  .chapters a:hover, .chapters a:focus-visible { opacity: 1; }
+  .chapters a[aria-current="true"] { color: var(--brown); opacity: 1; }
+  /* each chapter has an icon (shown only inside a behavior) and a name */
+  .ico { width: 0; height: 16px; flex-shrink: 0; overflow: visible; opacity: 0; transition: width .45s cubic-bezier(.3, .7, .2, 1), opacity .3s; }
+  .ico * { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+  .ico text { fill: currentColor; stroke: none; font: 700 8.5px 'Roboto', system-ui, sans-serif; letter-spacing: 0; }
+  .lbl { display: inline-block; max-width: 12em; overflow: hidden; transition: max-width .45s cubic-bezier(.3, .7, .2, 1), opacity .3s; }
+  /* a behavior's own steps, closed until you're in it */
+  .sub { gap: 20px; max-width: 0; overflow: hidden; opacity: 0; transition: max-width .55s cubic-bezier(.3, .7, .2, 1), opacity .35s, margin .45s; }
+  .sub a { font-weight: 400; letter-spacing: .1em; }
+  /* the underline under where you are: 20% lighter than the brown, 1.4px */
+  .chapters .mark { position: absolute; bottom: 2px; left: 0; height: 1.4px; width: 0; background: #9c7145; border-radius: 1px; transition: left .45s cubic-bezier(.3, .7, .2, 1), width .45s cubic-bezier(.3, .7, .2, 1), opacity .3s; opacity: 0; pointer-events: none; }
+
+  /* inside a behavior: the others become icons, this one opens its steps */
+  .deep .chapters { gap: 14px; }
+  .deep .chapters > li:not(.on) .ico { width: 16px; opacity: 1; }
+  .deep .chapters > li:not(.on) .lbl { max-width: 0; opacity: 0; }
+  .deep .chapters > li:not(.on) > a { position: relative; padding: 7.2px 2px; }
+  .deep .chapters > li.on .ico { width: 16px; opacity: 1; margin-right: 8px; }
+  .deep .chapters > li.on .ico circle { fill: var(--brown); }
+  .deep .chapters > li.on .ico text { fill: #fbf8f0; }
+  .deep .chapters > li.on > a { font-weight: 700; }
+  .deep .chapters > li.on .sub { max-width: 640px; opacity: 1; margin: 0 6px 0 22px; }
+  .deep .chapters > li.on .sub::before { content: ""; width: 1px; height: 14px; background: var(--line); margin-right: 2px; }
+  /* the icons say what they are on hover */
+  .deep .chapters > li:not(.on) > a::after {
+    content: attr(data-name); position: absolute; top: calc(100% + 8px); left: 50%; transform: translate(-50%, -4px); pointer-events: none;
+    padding: 5px 10px; border-radius: 12px; background: var(--brown); color: #fbf8f0; font-size: 10.5px; font-weight: 500; letter-spacing: .1em;
+    opacity: 0; transition: opacity .2s, transform .25s;
   }
-  .back:hover, .back:focus-visible { color: #ebcea0; }
+  .deep .chapters > li:not(.on) > a:hover::after, .deep .chapters > li:not(.on) > a:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
 
-  main { padding: calc(110 * var(--u)) calc(115 * var(--u)) calc(160 * var(--u)); }
-  h1 { margin: 0; font: 500 calc(55 * var(--u))/calc(58 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .04em; }
-  .lede { margin: calc(18 * var(--u)) 0 0; max-width: calc(551 * var(--u)); font: 500 calc(20 * var(--u))/calc(27 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .04em; color: #959292; }
-  .cover { margin-top: calc(56 * var(--u)); height: calc(560 * var(--u)); background: #d9d9d9; }
+  /* narrower screens: tighter chapters; in a behavior its number alone names it; below 900px the monogram alone leads back */
+  @media (max-width: 1040px) and (min-width: 761px) {
+    .chapters { gap: 12px; }
+    .chapters a { letter-spacing: .08em; }
+    .deep .chapters { gap: 10px; }
+    .deep .chapters > li.on > a .lbl { max-width: 0; opacity: 0; }
+    .deep .chapters > li.on .ico { margin-right: 0; }
+    .deep .chapters > li.on .sub { margin: 0 4px 0 12px; gap: 14px; }
+  }
+  @media (max-width: 900px) and (min-width: 761px) {
+    .home .sep, .home .back { display: none; }
+  }
 
+  /* ---- phones: where you are in the bar, every chapter and step in a dropdown ---- */
+  .now, .sheet { display: none; }
   @media (max-width: 760px) {
-    header { height: 64px; }
-    .home { width: 240px; }
-    .mono { left: 16px; top: 22px; width: 36px; height: 21px; }
-    .divider { left: 60px; top: 24px; height: 16px; }
-    .name { left: 72px; top: 0; font-size: 22px; line-height: 64px; }
-    .back { right: 16px; top: 24px; font-size: 15px; }
-    main { padding: 48px 16px 96px; }
-    h1 { font-size: 34px; line-height: 40px; }
-    .lede { font-size: 16px; line-height: 23px; }
-    .cover { margin-top: 32px; height: 56vw; }
+    .desk { display: none; }
+    .bar { height: 54px; padding: 0 12px 0 14px; gap: 10px; }
+    .home .sep, .home .back { display: none; }
+    .mono { width: 34px; height: 20px; }
+    .now {
+      margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(251, 248, 240, .92); font: 500 12px/1 'Roboto', system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--brown); cursor: pointer;
+    }
+    .now b { font-weight: 400; color: var(--soft); }
+    .now svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 1.6; transition: transform .3s; }
+    .now[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .sheet {
+      display: block; position: fixed; left: 10px; right: 10px; top: 62px; z-index: 11; margin: 0; padding: 8px; list-style: none;
+      max-height: calc(100vh - 80px); overflow-y: auto; overscroll-behavior: contain;
+      background: #fdfbf5; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 30px rgba(61, 42, 20, .18);
+      opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .25s, transform .3s cubic-bezier(.3, .7, .2, 1);
+    }
+    .sheet.open { opacity: 1; transform: none; pointer-events: auto; }
+    .sheet ul { list-style: none; margin: 0 0 4px; padding: 0 0 0 34px; }
+    .sheet a { display: flex; gap: 14px; padding: 11px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
+    .sheet ul a { padding: 8px 12px; font-size: 12.5px; font-weight: 400; letter-spacing: .08em; }
+    .sheet a b { font-weight: 400; width: 20px; color: rgba(131, 78, 23, .55); }
+    .sheet a[aria-current="true"] { background: rgba(131, 78, 23, .1); color: var(--brown); }
+    .sheet .all { margin-top: 4px; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; font-size: 12px; }
   }
-  @media (prefers-reduced-motion: reduce) { body { animation-duration: .01s; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: .01s !important; } }
 </style>
 </head>
 <body>
-  <header>
-    <a class="home" href="../index.html#home" aria-label="S Monalisha, home">
-      <svg class="mono" aria-hidden="true"><path id="mono-line" d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg>
-      <span class="divider" aria-hidden="true"></span>
-      <span class="name">S MONALISHA</span>
+  <header class="bar" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="sep"></span><span class="back">← All projects</span>
     </a>
-    <a class="back" href="../index.html#all-projects">← All projects</a>
+    <nav class="desk" aria-label="Chapters"><ul class="chapters"></ul></nav>
+    <button class="now" type="button" aria-expanded="false" aria-controls="sheet"><span class="now-label">Overview</span><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5"/></svg></button>
+    <span class="progress"></span>
   </header>
-  <main>
-    <h1>Behavior Design</h1>
-    <p class="lede">This project page is being put together.</p>
-    <div class="cover" role="img" aria-label="Project image (coming soon)"></div>
+  <ol class="sheet" id="sheet"></ol>
+
+  <main class="study" aria-label="Rules, Rituals and the Mid-Day Meal case study">
+    <img src="behavior-design/part-00.jpg" width="2818" height="2880" alt="">
+    <img src="behavior-design/part-01.jpg" width="2818" height="2880" alt="">
+    <img src="behavior-design/part-02.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-03.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-04.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-05.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-06.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-07.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-08.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-09.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-10.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-11.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-12.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-13.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-14.jpg" width="2818" height="2880" alt="" loading="lazy">
+    <img src="behavior-design/part-15.jpg" width="2818" height="2622" alt="" loading="lazy">
   </main>
+
+
 <script>
-  // the monogram's traced line, fitted to its box as on the main page
-  const line = document.getElementById('mono-line'), b = line.getBBox(), pad = 2.5;
-  line.ownerSVGElement.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`);
-  // home and back go to the main page that opened this one (Portfolio final,
-  // or an older version being compared)
-  let home = 'index.html';
-  try {
-    const from = document.referrer.includes('/projects/') ? null : (document.referrer.match(/\/([^\/?#]+\.html)(?:[?#]|$)/) || [])[1];
-    if (from) sessionStorage.setItem('home', from);
-    home = sessionStorage.getItem('home') || home;
-  } catch (e) {}
-  document.querySelectorAll('a.home, a.back').forEach(a => { a.href = '../' + home + a.getAttribute('href').replace(/^[^#]+/, ''); });
-  // leaving: fade out, then go
-  document.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
+  // The chapters: the name in the menu, where it starts in the Figma frame (y in Frame 82),
+  // its icon (a small circle with a letter or number, all alike), and for a behavior, its own steps.
+  // Rename or move them here.
+  const badge = t => `<circle cx="8" cy="8" r="6.6"/><text x="8" y="11" text-anchor="middle">${t}</text>`;
+  const CHAPTERS = [
+    { name: 'Context',      y: 784,   icon: badge('C') },
+    { name: 'Patterns',     y: 1568,  icon: badge('P') },
+    { name: 'Field lenses', y: 2232,  icon: badge('F') },
+    { name: 'Behavior 1',   y: 5363,  icon: badge(1), steps: [['Observation', 5363], ['Simulation', 6090], ['Proposal', 7563], ['Pilot & Measure', 10536]] },
+    { name: 'Behavior 2',   y: 11425, icon: badge(2), steps: [['Observation', 11425], ['Simulation', 13284], ['Proposal', 14694], ['Pilot & test plan', 17405]] },
+    { name: 'Behavior 3',   y: 18022, icon: badge(3), steps: [['Observation', 18022], ['Simulation', 19241], ['Proposal', 20721], ['Pilot test', 22203]] },
+  ];
+  const FRAME_H = 22911;
+
+  const study = document.querySelector('.study');
+  const num = i => String(i + 1).padStart(2, '0');
+  const esc = s => s.replace(/&/g, '&amp;');
+  const anchor = (id, y) => { const a = document.createElement('span'); a.className = 'anchor'; a.id = id; a.style.setProperty('--y', y); study.appendChild(a); };
+  CHAPTERS.forEach((c, i) => { anchor('ch-' + i, c.y); (c.steps || []).forEach((s, j) => anchor(`ch-${i}-${j}`, s[1])); });
+
+  // the two menus, from the one list
+  const chapters = document.querySelector('.chapters'), sheet = document.querySelector('.sheet'), nav = document.querySelector('.desk');
+  CHAPTERS.forEach((c, i) => {
+    const steps = (c.steps || []).map((s, j) => `<li><a href="#ch-${i}-${j}">${esc(s[0])}</a></li>`).join('');
+    chapters.insertAdjacentHTML('beforeend', `<li><a href="#ch-${i}" data-name="${c.name}"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true">${c.icon}</svg><span class="lbl">${c.name}</span></a>${steps ? `<ul class="sub" aria-label="${c.name}">${steps}</ul>` : ''}</li>`);
+    sheet.insertAdjacentHTML('beforeend', `<li><a href="#ch-${i}"><b>${num(i)}</b>${c.name}</a>${steps ? `<ul>${steps}</ul>` : ''}</li>`);
+  });
+  sheet.insertAdjacentHTML('beforeend', `<li><a class="all" href="../index.html#all-projects"><b>←</b>All projects</a></li>`);
+  const mark = document.createElement('span'); mark.className = 'mark'; chapters.appendChild(mark);
+
+  // the monogram's traced line, fitted to its box
+  {
+    const p = document.querySelector('.mono path'), b = p.getBBox(), pad = 2.5;
+    p.ownerSVGElement.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`);
+  }
+
+  // where a chapter or step starts on the page, in px, under the bar
+  const barH = () => innerWidth <= 760 ? 54 : 57.6;
+  const pageY = y => study.offsetTop + study.offsetHeight * y / FRAME_H;
+  const yOf = href => { const [i, j] = href.slice(4).split('-').map(Number); return j >= 0 ? CHAPTERS[i].steps[j][1] : CHAPTERS[i].y; };
+  document.querySelectorAll('a[href^="#ch-"]').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
-    document.body.classList.add('leaving');
-    requestAnimationFrame(() => document.body.classList.add('gone'));
-    setTimeout(() => { location.href = a.href; }, 450);
+    scrollTo({ top: pageY(yOf(a.getAttribute('href'))) - barH() + 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    closeSheet();
   }));
-  addEventListener('pageshow', () => document.body.classList.remove('leaving', 'gone'));
+
+  // the underline follows its link while the menu reshapes
+  let markFor = null, followUntil = 0;
+  function placeMark() {
+    if (!markFor) { mark.style.opacity = 0; return; }
+    const r = markFor.getBoundingClientRect(), base = chapters.getBoundingClientRect();
+    mark.style.left = (r.left - base.left) + 'px'; mark.style.width = r.width + 'px'; mark.style.opacity = 1;
+  }
+  function follow() { placeMark(); if (performance.now() < followUntil) requestAnimationFrame(follow); }
+
+  // what's on screen: the chapter and step, how far through, and whether we're past the cover
+  const bar = document.querySelector('.bar'), progress = document.querySelector('.progress'), nowLabel = document.querySelector('.now-label');
+  let current = '';
+  function update() {
+    const y = scrollY, max = document.documentElement.scrollHeight - innerHeight, line = y + barH() + 60;
+    bar.classList.toggle('solid', y > pageY(CHAPTERS[0].y) - 80);
+    progress.style.transform = `scaleX(${max > 0 ? (y / max).toFixed(4) : 0})`;
+    let on = -1, step = -1;
+    CHAPTERS.forEach((c, i) => { if (line >= pageY(c.y)) on = i; });
+    const atEnd = max > 0 && y >= max - 2;   // the last step is too short to reach the top
+    if (atEnd) on = CHAPTERS.length - 1;
+    const steps = on >= 0 && CHAPTERS[on].steps;
+    if (steps) { steps.forEach((s, j) => { if (line >= pageY(s[1])) step = j; }); if (atEnd) step = steps.length - 1; if (step < 0) step = 0; }
+    const key = on + '.' + step;
+    if (key === current) return;
+    current = key;
+    nav.classList.toggle('deep', !!steps);
+    [...chapters.children].forEach((li, i) => li.classList && li.classList.toggle('on', i === on));
+    document.querySelectorAll('a[href^="#ch-"]').forEach(a => {
+      const h = a.getAttribute('href');
+      a.setAttribute('aria-current', h === (steps ? `#ch-${on}-${step}` : `#ch-${on}`) || h === `#ch-${on}` ? 'true' : 'false');
+    });
+    markFor = on < 0 ? null : chapters.querySelector(`a[href="${steps ? `#ch-${on}-${step}` : `#ch-${on}`}"]`);
+    followUntil = performance.now() + 700; follow();
+    nowLabel.innerHTML = on < 0 ? 'Overview' : steps ? `<b>B${on - 2}</b> ${esc(steps[step][0])}` : `<b>${num(on)}</b> ${CHAPTERS[on].name}`;
+  }
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', () => { current = ''; update(); });
+  addEventListener('load', () => { current = ''; update(); });
+  update();
+
+  // phones: the dropdown
+  const nowBtn = document.querySelector('.now');
+  function closeSheet() { sheet.classList.remove('open'); nowBtn.setAttribute('aria-expanded', 'false'); }
+  nowBtn.addEventListener('click', () => { const open = !sheet.classList.contains('open'); sheet.classList.toggle('open', open); nowBtn.setAttribute('aria-expanded', open); });
+  addEventListener('click', e => { if (!e.target.closest('.sheet, .now')) closeSheet(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 </script>
 </body>
 </html>

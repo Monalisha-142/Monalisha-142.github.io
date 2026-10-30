@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redefining Ecotourism · S Monalisha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* The Ecotourism case study (Figma "Eco tourism" › Frame 3), under the System Thinking card.
+     Desktop: Option 1 (portfolio header with reading progress; Option 2, the chapter thread
+     on the side, is kept but off). Phone: Option 4 (chapter dropdown).
+     The case study itself is a picture of the Figma frame (1440 × 22122), without its own Nav. */
+  :root { --bg: #f5f6ee; --ink: #2f4a36; --green: #385940; --sage: #53775c; --line: rgba(83, 119, 92, .28); }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }   /* no font boosting on phones */
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: 'Roboto', system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+
+  /* the case study: the Figma frame, 1440 × 22122, in pieces */
+  .study { position: relative; }
+  .study img { display: block; width: 100%; height: auto; }
+  .anchor { position: absolute; left: 0; width: 1px; height: 1px; top: calc(var(--y) / 22122 * 100%); }
+
+  /* ---- shared bar ---- */
+  .bar {
+    position: fixed; inset: 0 0 auto 0; height: 57.6px; z-index: 10; display: flex; align-items: center; gap: 19.8px; padding: 0 36px;
+    background: transparent; transition: background .35s ease, box-shadow .35s ease, transform .35s ease;
+  }
+  .bar.solid { background: rgba(245, 246, 238, .94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+  .home { display: flex; align-items: center; gap: 12.6px; flex-shrink: 0; }
+  .mono { width: 36px; height: 20.7px; overflow: visible; }
+  .mono path { fill: none; stroke: var(--green); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
+  .home .sep { width: 1px; height: 16.2px; background: var(--line); }
+  .back { font-size: 10.8px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); transition: color .25s; }
+  .back:hover, .back:focus-visible { color: var(--green); }
+  .title { font-size: 15px; font-weight: 700; letter-spacing: .01em; color: var(--green); white-space: nowrap; }
+  .progress { position: absolute; left: 0; bottom: 0; height: 1.4px; width: 100%; background: var(--sage); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* ---- Option 1: chapters along the right of the bar, the current one underlined ---- */
+  .o1 nav { margin-left: auto; }
+  .chapters { position: relative; display: flex; gap: 23.4px; list-style: none; margin: 0; padding: 0; }
+  .chapters a { display: block; padding: 7.2px 0; font-size: 10.8px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); opacity: .75; transition: color .25s, opacity .25s; white-space: nowrap; }
+  .chapters a:hover, .chapters a:focus-visible { opacity: 1; }
+  .chapters a[aria-current="true"] { color: var(--green); opacity: 1; }
+  /* the underline under the current chapter: 20% lighter than the green, 1.4px */
+  .chapters .mark { position: absolute; bottom: 2px; left: 0; height: 1.4px; width: 0; background: #607a66; border-radius: 1px; transition: left .45s cubic-bezier(.3, .7, .2, 1), width .45s cubic-bezier(.3, .7, .2, 1), opacity .3s; opacity: 0; }
+
+  /* narrower screens: tighter chapters, and below 900px the monogram alone leads back */
+  @media (max-width: 1040px) and (min-width: 761px) {
+    .chapters { gap: 12px; }
+    .chapters a { letter-spacing: .08em; }
+  }
+  @media (max-width: 900px) and (min-width: 761px) {
+    .o1 .home .sep, .o1 .home .back { display: none; }
+  }
+
+  /* ---- Option 2: a quiet bar; the chapters as a thread of dots down the left side ---- */
+  .o2 .title { margin-left: auto; }
+  .rail { position: fixed; left: 26px; top: 50%; transform: translateY(-50%); z-index: 9; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+  .rail::before, .rail .done { content: ""; position: absolute; left: 5px; top: 6px; width: 1.5px; bottom: 6px; background: var(--line); }
+  .rail .done { background: var(--sage); bottom: auto; height: 0; transition: height .45s cubic-bezier(.3, .7, .2, 1); }
+  .rail li { position: relative; }
+  .rail a { position: relative; display: block; width: 12px; height: 12px; }
+  .rail a::before { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--sage); transition: transform .3s cubic-bezier(.3, 1.5, .5, 1), background .3s; }
+  .rail a.past::before { background: var(--sage); }
+  .rail a[aria-current="true"]::before { background: var(--green); border-color: var(--green); transform: scale(1.45); }
+  .rail .tag {
+    position: absolute; left: 24px; top: 50%; transform: translate(-6px, -50%); white-space: nowrap; pointer-events: none;
+    padding: 5px 11px; border-radius: 14px; background: var(--green); color: #f5f6ee;
+    font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; opacity: 0; transition: opacity .25s, transform .3s;
+  }
+  .rail .tag b { font-weight: 400; opacity: .7; margin-right: 7px; }
+  .rail a:hover .tag, .rail a:focus-visible .tag, .rail a.flash .tag { opacity: 1; transform: translate(0, -50%); }
+
+  /* which option is on */
+  body:not(.opt1) .o1, body:not(.opt2) .o2, body:not(.opt2) .rail { display: none; }
+
+
+  /* ---- Option 4 (phones): the current chapter in the bar, the rest in a dropdown ---- */
+  .o4, .sheet { display: none; }
+  @media (max-width: 760px) {
+    .o1, .o2, .rail { display: none !important; }
+    .o4 { display: flex; }
+    .bar { height: 54px; padding: 0 12px 0 14px; gap: 10px; }
+    .o4 .home .back { display: none; }
+    .o4 .mono { width: 34px; height: 20px; }
+    .now {
+      margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(245, 246, 238, .9); font: 500 12px/1 'Roboto', system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--green); cursor: pointer;
+    }
+    .now b { font-weight: 400; color: var(--sage); }
+    .now svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 1.6; transition: transform .3s; }
+    .now[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .sheet {
+      display: block; position: fixed; left: 10px; right: 10px; top: 62px; z-index: 11; margin: 0; padding: 8px; list-style: none;
+      background: #fbfcf6; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 30px rgba(47, 74, 54, .18);
+      opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .25s, transform .3s cubic-bezier(.3, .7, .2, 1);
+    }
+    .sheet.open { opacity: 1; transform: none; pointer-events: auto; }
+    .sheet a { display: flex; gap: 14px; padding: 12px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--sage); }
+    .sheet a b { font-weight: 400; width: 20px; color: var(--line); color: rgba(83, 119, 92, .6); }
+    .sheet a[aria-current="true"] { background: rgba(83, 119, 92, .12); color: var(--green); }
+    .sheet .all { margin-top: 4px; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: .01s !important; } }
+</style>
+</head>
+<body class="opt1">
+  <!-- Option 1 -->
+  <header class="bar o1" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="sep"></span><span class="back">← All projects</span>
+    </a>
+    <nav aria-label="Chapters"><ul class="chapters"></ul></nav>
+    <span class="progress"></span>
+  </header>
+
+  <!-- Option 2 -->
+  <header class="bar o2" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="sep"></span><span class="back">← All projects</span>
+    </a>
+    <span class="progress"></span>
+  </header>
+  <nav aria-label="Chapters"><ol class="rail"><span class="done" aria-hidden="true"></span></ol></nav>
+
+  <!-- Option 4 (phones) -->
+  <header class="bar o4" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="back">← All projects</span>
+    </a>
+    <button class="now" type="button" aria-expanded="false" aria-controls="sheet"><span class="now-label">Overview</span><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5"/></svg></button>
+    <span class="progress"></span>
+  </header>
+  <ol class="sheet" id="sheet"></ol>
+
+  <main class="study" aria-label="Redefining Ecotourism case study">
+    <img src="ecotourism/part-00.jpg" width="2880" height="2880" alt="">
+    <img src="ecotourism/part-01.jpg" width="2880" height="2880" alt="">
+    <img src="ecotourism/part-02.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-03.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-04.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-05.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-06.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-07.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-08.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-09.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-10.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-11.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-12.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-13.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-14.jpg" width="2880" height="2880" alt="" loading="lazy">
+    <img src="ecotourism/part-15.jpg" width="2880" height="1044" alt="" loading="lazy">
+  </main>
+
+
+<script>
+  // The chapters: the name shown in the menu, and where the chapter starts in the
+  // Figma frame (its "anchor/…" layer). Rename them here.
+  const CHAPTERS = [
+    ['Context', 746],
+    ['Approach', 3846],
+    ['Landscape', 5613],
+    ['Exploration', 8231],
+    ['Patterns', 13934],
+    ['Insights', 15752],
+    ['Outcome', 17693],
+    ['Reflection', 21248],
+  ];
+  const FRAME_H = 22122;
+
+  const study = document.querySelector('.study');
+  const num = i => String(i + 1).padStart(2, '0');
+  CHAPTERS.forEach(([name, y], i) => {
+    const a = document.createElement('span'); a.className = 'anchor'; a.id = 'ch-' + i; a.style.setProperty('--y', y); study.appendChild(a);
+  });
+  // the three menus, from the one list
+  const chapters = document.querySelector('.chapters'), rail = document.querySelector('.rail'), sheet = document.querySelector('.sheet');
+  const mark = document.createElement('span'); mark.className = 'mark'; chapters.appendChild(mark);
+  CHAPTERS.forEach(([name], i) => {
+    chapters.insertAdjacentHTML('beforeend', `<li><a href="#ch-${i}">${name}</a></li>`);
+    rail.insertAdjacentHTML('beforeend', `<li><a href="#ch-${i}" aria-label="${num(i)} ${name}"><span class="tag"><b>${num(i)}</b>${name}</span></a></li>`);
+    sheet.insertAdjacentHTML('beforeend', `<li><a href="#ch-${i}"><b>${num(i)}</b>${name}</a></li>`);
+  });
+  sheet.insertAdjacentHTML('beforeend', `<li><a class="all" href="../index.html#all-projects"><b>←</b>All projects</a></li>`);
+
+  // the monogram's traced line, fitted to its box
+  // (measured once, in a sketch svg off the page, since two of the three bars start hidden)
+  {
+    const sketch = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    sketch.style.cssText = 'position:absolute;left:-9999px;top:0;width:10px;height:10px';
+    sketch.innerHTML = `<path d="${document.querySelector('.mono path').getAttribute('d')}"/>`;
+    document.body.appendChild(sketch);
+    const b = sketch.firstChild.getBBox(), pad = 2.5; sketch.remove();
+    document.querySelectorAll('.mono').forEach(s => s.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`));
+  }
+
+  // where each chapter starts on the page, in px, under the bar
+  const barH = () => innerWidth <= 760 ? 54 : 57.6;
+  const chapterTop = i => study.offsetTop + study.offsetHeight * CHAPTERS[i][1] / FRAME_H;
+  document.querySelectorAll('a[href^="#ch-"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    const i = +a.getAttribute('href').slice(4);
+    scrollTo({ top: chapterTop(i) - barH() + 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    closeSheet();
+  }));
+
+  // what's on screen: the current chapter, how far through, and whether we're past the cover
+  const bars = [...document.querySelectorAll('.bar')], progress = [...document.querySelectorAll('.progress')];
+  const nowLabel = document.querySelector('.now-label');
+  let current = -2, flashTimer = 0;
+  function update() {
+    const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    const coverEnd = study.offsetHeight * CHAPTERS[0][1] / FRAME_H - 80;
+    bars.forEach(b => b.classList.toggle('solid', y > coverEnd));
+    progress.forEach(p => p.style.transform = `scaleX(${max > 0 ? (y / max).toFixed(4) : 0})`);
+    let on = -1;
+    CHAPTERS.forEach((c, i) => { if (y + barH() + 60 >= chapterTop(i)) on = i; });
+    if (max > 0 && y >= max - 2) on = CHAPTERS.length - 1;   // the last chapter is too short to reach the top
+    if (on === current) return;
+    current = on;
+    document.querySelectorAll('.chapters a, .rail a, .sheet a[href^="#ch-"]').forEach(a => {
+      const i = +a.getAttribute('href').slice(4);
+      a.setAttribute('aria-current', i === on ? 'true' : 'false');
+      a.classList.toggle('past', i < on);
+    });
+    // Option 1: the underline slides to the current chapter
+    const link = on >= 0 ? chapters.querySelectorAll('a')[on] : null;
+    if (link) { mark.style.left = link.offsetLeft + 'px'; mark.style.width = link.offsetWidth + 'px'; mark.style.opacity = 1; } else mark.style.opacity = 0;
+    // Option 2: the thread fills to the current dot, whose name shows for a moment
+    const dots = rail.querySelectorAll('a');
+    rail.querySelector('.done').style.height = on >= 0 ? (dots[on].parentElement.offsetTop + 6 - 6) + 'px' : '0px';
+    dots.forEach(d => d.classList.remove('flash'));
+    clearTimeout(flashTimer);
+    if (on >= 0) { dots[on].classList.add('flash'); flashTimer = setTimeout(() => dots[on].classList.remove('flash'), 1600); }
+    // Option 4: the bar says where you are
+    nowLabel.innerHTML = on >= 0 ? `<b>${num(on)}</b> ${CHAPTERS[on][0]}` : 'Overview';
+  }
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', () => { current = -2; update(); });
+  addEventListener('load', () => { current = -2; update(); });
+  update();
+
+  // Option 4: the dropdown
+  const nowBtn = document.querySelector('.now');
+  function closeSheet() { sheet.classList.remove('open'); nowBtn.setAttribute('aria-expanded', 'false'); }
+  nowBtn.addEventListener('click', () => { const open = !sheet.classList.contains('open'); sheet.classList.toggle('open', open); nowBtn.setAttribute('aria-expanded', open); });
+  addEventListener('click', e => { if (!e.target.closest('.sheet, .now')) closeSheet(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+</script>
+</body>
+</html>
