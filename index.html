@@ -121,12 +121,14 @@
     width: 100%; height: calc(556 * var(--u)); pointer-events: none;
   }
 
-  /* the photo, empty for now: 612 × 518 from (770, 356), in line with the menu
-     on the right. Scrolling carries it up to its About me place, 199 higher. */
+  /* the photo (Figma "Profile pic", frame and all): 612 × 518 from (770, 356), in
+     line with the menu on the right. Scrolling carries it up to its About me place,
+     199 higher. Its corners are rounded as in Figma: 33 top left, 30 bottom right. */
   .photo {
     position: absolute; left: calc(770 * var(--u)); top: calc(356 * var(--u));
     width: calc(612 * var(--u)); height: calc(518 * var(--u));
-    background: #d9d9d9; will-change: transform;
+    background: url("assets/photo/profile.jpg") center 30% / cover no-repeat;
+    border-radius: calc(33 * var(--u)) 0 calc(30 * var(--u)) 0; will-change: transform;
   }
 
   /* "Hi there" and the domains, with their bars: they rise and fade as the page scrolls */
@@ -760,7 +762,7 @@
       <p class="c-foot rise">Designed and woven by S Monalisha · © 2026</p>
     </section>
 
-    <div class="photo" role="img" aria-label="Photo of Sushree Monalisha (coming soon)"></div>
+    <div class="photo" role="img" aria-label="Photo of Sushree Monalisha"></div>
    </div>
    <div class="band-fade" aria-hidden="true"></div>
 
