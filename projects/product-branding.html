@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OneByTwo · Product Branding · S Monalisha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hubballi&display=swap" rel="stylesheet">
+<style>
+  /* The OneByTwo case study (Figma "Branding and Marketing" › "Product branding", 1440 × 14002),
+     under the Product Branding card. The frame is shown as its 19 sections, exported at 2× so
+     it stays sharp; its Nav becomes the portfolio's case-study bar (the same as the other
+     projects, in the brand's colours). Kept from the Figma prototype: the chapter links, the
+     collateral strip that scrolls sideways (its golden bar fills as it goes) and the full
+     Gantt chart that opens over the page. */
+  :root {
+    --bg: #f7efe7; --ink: #2e1a10; --brown: #643315; --tan: #7a4a33; --line: #e8cdb2;
+    --sand: #ebd3c1; --gold: #f3d58a;
+  }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+  /* ---- the case study: the sections one under another, each a 2× picture ---- */
+  .study { position: relative; container-type: inline-size; }
+  .sec { position: relative; --k: calc(100cqw / 1440); }
+  .sec > img { display: block; width: 100%; height: auto; }
+  .sec[id] { scroll-margin-top: 56px; }
+
+  /* ---- Brand visibility: the collaterals scroll sideways in a 942 × 512 window ---- */
+  .strip {
+    position: absolute; left: calc(405 * var(--k)); top: calc(196 * var(--k));
+    width: calc(942 * var(--k)); height: calc(512 * var(--k));
+    overflow-x: auto; overflow-y: hidden; background: var(--sand);
+    scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; outline: none;
+  }
+  .strip::-webkit-scrollbar { display: none; }
+  .strip.dragging { cursor: grabbing; scroll-behavior: auto; }
+  .strip:focus-visible { box-shadow: 0 0 0 2px var(--brown); }
+  .track { position: relative; width: calc(4272 * var(--k)); height: 100%; }
+  .track img {
+    position: absolute; top: calc(8 * var(--k)); left: calc(var(--x) * var(--k));
+    width: calc(var(--w) * var(--k)); height: calc(489 * var(--k));
+    -webkit-user-drag: none; user-select: none; pointer-events: none;
+  }
+  /* the golden bar (Figma "Scroll hint" › Progress, 160 × 3): it fills from the left as
+     the strip goes right, and empties again going back, like the bar's progress line */
+  .hint-bar {
+    position: absolute; left: calc(990 * var(--k)); top: calc(180 * var(--k));
+    width: calc(160 * var(--k)); height: max(2px, calc(3 * var(--k))); border-radius: 2px; overflow: hidden;
+    background: #a27e3f;   /* 40% pale yellow over the brown pill, as in Figma */
+  }
+  .hint-bar i { position: absolute; inset: 0; background: var(--gold); border-radius: 2px; transform-origin: 0 50%; transform: scaleX(.34); transition: transform .25s ease-out; }
+  .hint-go { position: absolute; left: calc(1158 * var(--k)); top: calc(172 * var(--k)); width: calc(194 * var(--k)); height: calc(20 * var(--k)); border-radius: 10px; }
+  .hint-go:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---- Gantt chart: the thumbnail and "View full Gantt" open the detailed plan ---- */
+  .open-gantt { position: absolute; border-radius: calc(14 * var(--k)); }
+  .open-gantt.thumb { left: calc(649 * var(--k)); top: calc(326 * var(--k)); width: calc(688 * var(--k)); height: calc(435 * var(--k)); }
+  .open-gantt.cta { left: calc(90 * var(--k)); top: calc(720 * var(--k)); width: calc(229 * var(--k)); height: calc(41 * var(--k)); border-radius: 999px; }
+  .open-gantt:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .open-gantt.thumb::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(46, 26, 16, 0); transition: background .25s; }
+  .open-gantt.thumb:hover::after { background: rgba(46, 26, 16, .06); }
+
+  .overlay {
+    position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 2vh 2vw;
+    background: rgba(46, 26, 16, .55); opacity: 0; pointer-events: none; transition: opacity .3s ease;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .panel {
+    position: relative; width: min(1360px, 96vw); height: min(900px, 94vh); box-sizing: border-box;
+    padding: 30px 32px 32px; background: var(--bg); border-radius: 18px; display: flex; flex-direction: column;
+    box-shadow: 0 30px 80px rgba(46, 26, 16, .35); transform: translateY(10px); transition: transform .3s ease;
+  }
+  .overlay.open .panel { transform: none; }
+  .panel .kicker { margin: 0; font: 500 12px/15px 'Inter', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--tan); }
+  .panel h2 { margin: 19px 0 0; font: 400 26px/29px 'Hubballi', sans-serif; color: var(--ink); padding-right: 300px; }
+  .panel .tip { position: absolute; right: 94px; top: 71px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--tan); }
+  .panel .close { position: absolute; right: 32px; top: 53px; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; }
+  .panel .close svg { width: 14px; height: 14px; stroke: var(--bg); stroke-width: 1.8; stroke-linecap: round; }
+  .panel .close:focus-visible { outline: 2px solid var(--brown); outline-offset: 3px; }
+  .viewer { flex: 1; margin-top: 19px; overflow: auto; background: #fff; border-radius: 6px; cursor: grab; overscroll-behavior: contain; }
+  .viewer.dragging { cursor: grabbing; }
+  .viewer .tiles { display: grid; grid-template-columns: repeat(2, 2796px); width: 5592px; }
+  .viewer img { display: block; width: 2796px; height: 1752px; -webkit-user-drag: none; user-select: none; }
+  @media (max-width: 760px) {
+    .panel { padding: 20px 16px 16px; border-radius: 14px; }
+    .panel h2 { font-size: 20px; line-height: 23px; padding-right: 48px; }
+    .panel .tip { display: none; }
+    .panel .close { right: 14px; top: 14px; }
+    .viewer .tiles { grid-template-columns: repeat(2, 1398px); width: 2796px; }
+    .viewer img { width: 1398px; height: 876px; }
+  }
+
+  /* ---- the bar: the same as the other case studies, in OneByTwo's colours ---- */
+  .bar {
+    position: fixed; inset: 0 0 auto 0; height: 57.6px; z-index: 10; display: flex; align-items: center; gap: 19.8px; padding: 0 36px;
+    background: rgba(247, 239, 231, .94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); box-shadow: 0 1px 0 var(--line);
+  }
+  .home { display: flex; align-items: center; gap: 12.6px; flex-shrink: 0; }
+  .mono { width: 36px; height: 20.7px; overflow: visible; }
+  .mono path { fill: none; stroke: var(--brown); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
+  .home .sep { width: 1px; height: 16px; background: rgba(100, 51, 21, .5); }
+  .back { font-size: 10.8px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--brown); transition: color .25s; }
+  .back:hover, .back:focus-visible { color: var(--ink); }
+  /* the line along the bar's bottom edge fills as you read */
+  .progress { position: absolute; left: 0; bottom: 0; height: 1.4px; width: 100%; background: var(--brown); transform-origin: 0 50%; transform: scaleX(0); }
+
+  .o1 nav { margin-left: auto; }
+  .chapters { position: relative; display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+  .chapters a { display: block; padding: 7px 0; font-size: 10.8px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--tan); transition: color .25s; white-space: nowrap; }
+  .chapters a:hover, .chapters a:focus-visible { color: var(--ink); }
+  .chapters a[aria-current="true"] { color: var(--ink); }
+  .chapters .mark { position: absolute; bottom: 2px; left: 0; height: 1px; width: 0; background: var(--brown); transition: left .45s cubic-bezier(.3, .7, .2, 1), width .45s cubic-bezier(.3, .7, .2, 1), opacity .3s; opacity: 0; }
+  @media (max-width: 1180px) and (min-width: 761px) { .chapters { gap: 12px; } .chapters a { letter-spacing: .07em; } }
+  @media (max-width: 980px) and (min-width: 761px) { .o1 .home .sep, .o1 .home .back { display: none; } .chapters { gap: 9px; } .chapters a { font-size: 10px; letter-spacing: .04em; } }
+
+  /* phones: the current chapter in the bar, the rest in a dropdown */
+  .o4, .sheet { display: none; }
+  @media (max-width: 760px) {
+    .o1 { display: none !important; }
+    .o4 { display: flex; }
+    .bar { height: 54px; padding: 0 12px 0 14px; gap: 10px; }
+    .o4 .home .back { display: none; }
+    .o4 .mono { width: 34px; height: 20px; }
+    .now {
+      margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(247, 239, 231, .9); font: 500 12px/1 'Inter', system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
+    }
+    .now b { font-weight: 400; color: var(--tan); }
+    .now svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 1.6; transition: transform .3s; }
+    .now[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .sheet {
+      display: block; position: fixed; left: 10px; right: 10px; top: 62px; z-index: 11; margin: 0; padding: 8px; list-style: none;
+      background: #fbf6f1; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 10px 30px rgba(46, 26, 16, .18);
+      opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .25s, transform .3s cubic-bezier(.3, .7, .2, 1);
+    }
+    .sheet.open { opacity: 1; transform: none; pointer-events: auto; }
+    .sheet a { display: flex; gap: 14px; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--tan); }
+    .sheet a b { font-weight: 400; width: 20px; color: rgba(122, 74, 51, .6); }
+    .sheet a[aria-current="true"] { background: rgba(100, 51, 21, .1); color: var(--ink); }
+    .sheet .all { margin-top: 4px; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; font-size: 12px; }
+    .sec[id] { scroll-margin-top: 52px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: .01s !important; } }
+</style>
+</head>
+<body>
+  <header class="bar o1" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="sep"></span><span class="back">← All projects</span>
+    </a>
+    <nav aria-label="Chapters"><ul class="chapters"></ul></nav>
+    <span class="progress"></span>
+  </header>
+
+  <header class="bar o4" aria-label="Case study">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="back">← All projects</span>
+    </a>
+    <button class="now" type="button" aria-expanded="false" aria-controls="sheet"><span class="now-label">Overview</span><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5"/></svg></button>
+    <span class="progress"></span>
+  </header>
+  <ol class="sheet" id="sheet"></ol>
+
+  <main class="study" aria-label="OneByTwo, Everyday Premium Chocolate: product branding case study">
+    <div class="sec"><img src="product-branding/part-00.jpg" width="2880" height="1558" alt="OneByTwo, Everyday Premium Chocolate. A premium Indian chocolate made for two tastes: rich dark and creamy milk in one bar, made to share. 5-member group, 2 weeks, product branding."></div>
+    <div class="sec" id="overview"><img src="product-branding/part-01.jpg" width="2880" height="890" alt=""></div>
+    <div class="sec"><img src="product-branding/part-02.jpg" width="2880" height="384" alt="What if sharing chocolate didn’t mean choosing between dark and milk?"></div>
+    <div class="sec" id="research"><img src="product-branding/part-03.jpg" width="2880" height="2936" alt="" loading="lazy"></div>
+    <div class="sec" id="insight"><img src="product-branding/part-04.jpg" width="2880" height="1720" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-05.jpg" width="2880" height="666" alt="Chapter 01: Brand design" loading="lazy"></div>
+    <div class="sec" id="brand"><img src="product-branding/part-06.jpg" width="2880" height="1970" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-07.jpg" width="2880" height="1606" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-08.jpg" width="2880" height="1720" alt="" loading="lazy"></div>
+    <div class="sec" id="packaging"><img src="product-branding/part-09.jpg" width="2880" height="2198" alt="" loading="lazy"></div>
+    <div class="sec" id="campaign">
+      <img src="product-branding/part-10.jpg" width="2880" height="1540" alt="Brand visibility: static and social advertising" loading="lazy">
+      <div class="strip" tabindex="0" role="region" aria-label="Collaterals: scroll sideways to see all seven">
+        <div class="track">
+          <img src="product-branding/collateral-1.jpg" style="--x:0; --w:248" width="496" height="978" alt="Social story: “Dark or milk?” poll">
+          <img src="product-branding/collateral-2.jpg" style="--x:284; --w:441" width="882" height="978" alt="Social post: Same flavour, two tastes">
+          <img src="product-branding/collateral-3.jpg" style="--x:761; --w:1100" width="2200" height="978" alt="Outdoor billboard: Everyone likes it shared">
+          <img src="product-branding/collateral-4.jpg" style="--x:1897; --w:300" width="600" height="978" alt="In-store sampler tent card: Break one for you, one for them">
+          <img src="product-branding/collateral-5.jpg" style="--x:2233; --w:340" width="680" height="978" alt="Outdoor poster">
+          <img src="product-branding/collateral-6.jpg" style="--x:2609; --w:560" width="1120" height="978" alt="Digital display banners">
+          <img src="product-branding/collateral-7.jpg" style="--x:3205; --w:1027" width="2054" height="978" alt="Print newspaper ad">
+        </div>
+      </div>
+      <span class="hint-bar" aria-hidden="true"><i></i></span>
+      <button class="hint-go" type="button" aria-label="Scroll to see more collaterals"></button>
+    </div>
+    <div class="sec"><img src="product-branding/part-11.jpg" width="2880" height="666" alt="Chapter 02: Market and project management" loading="lazy"></div>
+    <div class="sec" id="marketing"><img src="product-branding/part-12.jpg" width="2880" height="1260" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-13.jpg" width="2880" height="1636" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-14.jpg" width="2880" height="1568" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-15.jpg" width="2880" height="1708" alt="" loading="lazy"></div>
+    <div class="sec" id="plan">
+      <img src="product-branding/part-16.jpg" width="2880" height="1672" alt="" loading="lazy">
+      <button class="open-gantt thumb" type="button" aria-label="Open the full Gantt chart"></button>
+      <button class="open-gantt cta" type="button" aria-label="View full Gantt"></button>
+    </div>
+    <div class="sec" id="launch"><img src="product-branding/part-17.jpg" width="2880" height="1656" alt="" loading="lazy"></div>
+    <div class="sec"><img src="product-branding/part-18.jpg" width="2880" height="656" alt="" loading="lazy"></div>
+  </main>
+
+  <div class="overlay" id="gantt" role="dialog" aria-modal="true" aria-labelledby="gantt-title" aria-hidden="true">
+    <div class="panel">
+      <p class="kicker">OneByTwo · Detailed Gantt chart</p>
+      <h2 id="gantt-title">Work breakdown, scheduled day by day across 12 weeks</h2>
+      <span class="tip"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2 6 4M8 2l2 2M8 14l-2-2M8 14l2-2M2 8l2-2M2 8l2 2M14 8l-2-2M14 8l-2 2"/></svg>Scroll to explore all tasks and weeks</span>
+      <button class="close" type="button" aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1 1 13"/></svg></button>
+      <div class="viewer" tabindex="0" aria-label="Detailed Gantt chart">
+        <div class="tiles">
+          <img src="product-branding/gantt-r0c0.jpg" width="3495" height="2190" alt="Detailed Gantt chart, part 1 of 4" loading="lazy">
+          <img src="product-branding/gantt-r0c1.jpg" width="3495" height="2190" alt="Detailed Gantt chart, part 2 of 4" loading="lazy">
+          <img src="product-branding/gantt-r1c0.jpg" width="3495" height="2190" alt="Detailed Gantt chart, part 3 of 4" loading="lazy">
+          <img src="product-branding/gantt-r1c1.jpg" width="3495" height="2190" alt="Detailed Gantt chart, part 4 of 4" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // The chapters, as the Figma Nav has them: the name, and the section it scrolls to.
+  const CHAPTERS = [
+    ['Overview', 'overview'], ['Research', 'research'], ['Insight', 'insight'], ['Brand', 'brand'],
+    ['Packaging', 'packaging'], ['Campaign', 'campaign'], ['Marketing', 'marketing'], ['Plan', 'plan'], ['Launch', 'launch'],
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const num = i => String(i + 1).padStart(2, '0');
+  const chapters = document.querySelector('.chapters'), sheet = document.querySelector('.sheet');
+  const mark = document.createElement('span'); mark.className = 'mark'; chapters.appendChild(mark);
+  CHAPTERS.forEach(([name, id]) => {
+    chapters.insertAdjacentHTML('beforeend', `<li><a href="#${id}">${name}</a></li>`);
+  });
+  CHAPTERS.forEach(([name, id], i) => sheet.insertAdjacentHTML('beforeend', `<li><a href="#${id}"><b>${num(i)}</b>${name}</a></li>`));
+  sheet.insertAdjacentHTML('beforeend', `<li><a class="all" href="../index.html#all-projects"><b>←</b>All projects</a></li>`);
+
+  // the monogram's traced line, fitted to its box
+  {
+    const sketch = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    sketch.style.cssText = 'position:absolute;left:-9999px;top:0;width:10px;height:10px';
+    sketch.innerHTML = `<path d="${document.querySelector('.mono path').getAttribute('d')}"/>`;
+    document.body.appendChild(sketch);
+    const b = sketch.firstChild.getBBox(), pad = 2.5; sketch.remove();
+    document.querySelectorAll('.mono').forEach(s => s.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`));
+  }
+
+  // the chapter links scroll to their section (Figma: Scroll to, animated)
+  const secs = CHAPTERS.map(([, id]) => document.getElementById(id));
+  document.querySelectorAll('.chapters a, .sheet a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById(a.getAttribute('href').slice(1)).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    closeSheet();
+  }));
+
+  // where you are: the line along the bar fills, the current chapter is underlined
+  const progress = [...document.querySelectorAll('.progress')], nowLabel = document.querySelector('.now-label');
+  const barH = () => innerWidth <= 760 ? 54 : 57.6;
+  let current = -2;
+  function update() {
+    const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    progress.forEach(p => p.style.transform = `scaleX(${max > 0 ? (y / max).toFixed(4) : 0})`);
+    let on = -1;
+    secs.forEach((s, i) => { if (y + barH() + 60 >= s.offsetTop) on = i; });
+    if (max > 0 && y >= max - 2) on = CHAPTERS.length - 1;
+    if (on === current) return;
+    current = on;
+    document.querySelectorAll('.chapters a, .sheet a[href^="#"]').forEach(a => {
+      const i = CHAPTERS.findIndex(c => '#' + c[1] === a.getAttribute('href'));
+      a.setAttribute('aria-current', i === on ? 'true' : 'false');
+    });
+    const link = on >= 0 ? chapters.querySelectorAll('a')[on] : null;
+    if (link) { mark.style.left = link.offsetLeft + 'px'; mark.style.width = link.offsetWidth + 'px'; mark.style.opacity = 1; } else mark.style.opacity = 0;
+    nowLabel.innerHTML = on >= 0 ? `<b>${num(on)}</b> ${CHAPTERS[on][0]}` : 'Overview';
+  }
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', () => { current = -2; update(); });
+  addEventListener('load', () => { current = -2; update(); });
+  update();
+
+  // phones: the chapter dropdown
+  const nowBtn = document.querySelector('.now');
+  function closeSheet() { sheet.classList.remove('open'); nowBtn.setAttribute('aria-expanded', 'false'); }
+  nowBtn.addEventListener('click', () => { const open = !sheet.classList.contains('open'); sheet.classList.toggle('open', open); nowBtn.setAttribute('aria-expanded', open); });
+  addEventListener('click', e => { if (!e.target.closest('.sheet, .now')) closeSheet(); });
+
+  // drag to move a scrolling box with the mouse (touch scrolls it natively)
+  function draggable(box, axes) {
+    let start = null;
+    box.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      start = { x: e.clientX, y: e.clientY, l: box.scrollLeft, t: box.scrollTop, moved: false };
+      box.setPointerCapture(e.pointerId);
+    });
+    box.addEventListener('pointermove', e => {
+      if (!start) return;
+      const dx = e.clientX - start.x, dy = e.clientY - start.y;
+      if (!start.moved && Math.hypot(dx, dy) < 4) return;
+      start.moved = true; box.classList.add('dragging');
+      box.scrollLeft = start.l - dx;
+      if (axes === 'both') box.scrollTop = start.t - dy;
+    });
+    const end = () => { start = null; box.classList.remove('dragging'); };
+    box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+  }
+
+  // Brand visibility: the strip of collaterals, and its golden bar
+  const strip = document.querySelector('.strip'), fill = document.querySelector('.hint-bar i');
+  function fillBar() {
+    const room = strip.scrollWidth - strip.clientWidth;
+    const seen = strip.clientWidth / strip.scrollWidth;              // the share in view: the bar starts this full
+    const p = room > 0 ? strip.scrollLeft / room : 1;
+    fill.style.transform = `scaleX(${(seen + (1 - seen) * p).toFixed(4)})`;
+  }
+  strip.addEventListener('scroll', fillBar, { passive: true });
+  addEventListener('resize', fillBar); addEventListener('load', fillBar); fillBar();
+  draggable(strip, 'x');
+  // with the pointer anywhere over Brand visibility, a sideways scroll (two fingers
+  // left/right, or Shift + wheel) moves the strip; up and down always scroll the page
+  const campaign = document.getElementById('campaign');
+  campaign.addEventListener('wheel', e => {
+    if (e.ctrlKey || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;   // up/down (or pinch): the page
+    if (e.target.closest('.strip')) return;                   // over the strip it scrolls sideways by itself
+    e.preventDefault();
+    strip.scrollLeft += e.deltaX * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? strip.clientWidth : 1);
+  }, { passive: false });
+  strip.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); strip.scrollBy({ left: strip.clientWidth * .6, behavior: reduce ? 'auto' : 'smooth' }); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); strip.scrollBy({ left: -strip.clientWidth * .6, behavior: reduce ? 'auto' : 'smooth' }); }
+  });
+  // "Scroll to see all collaterals →": a step along; at the end, back to the start
+  document.querySelector('.hint-go').addEventListener('click', () => {
+    const room = strip.scrollWidth - strip.clientWidth;
+    strip.scrollTo({ left: strip.scrollLeft >= room - 2 ? 0 : Math.min(room, strip.scrollLeft + strip.clientWidth * .8), behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  // Gantt chart: the thumbnail or "View full Gantt" opens the plan over the page (Figma: overlay, dissolve 0.3 s)
+  const gantt = document.getElementById('gantt'), viewer = gantt.querySelector('.viewer'), closeBtn = gantt.querySelector('.close');
+  let opener = null;
+  function openGantt(e) {
+    opener = e.currentTarget;
+    gantt.classList.add('open'); gantt.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+    closeBtn.focus({ preventScroll: true });
+  }
+  function closeGantt() {
+    if (!gantt.classList.contains('open')) return;
+    gantt.classList.remove('open'); gantt.setAttribute('aria-hidden', 'true');
+    document.documentElement.style.overflow = '';
+    if (opener) opener.focus({ preventScroll: true });
+  }
+  document.querySelectorAll('.open-gantt').forEach(b => b.addEventListener('click', openGantt));
+  closeBtn.addEventListener('click', closeGantt);
+  gantt.addEventListener('click', e => { if (e.target === gantt) closeGantt(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') { closeGantt(); closeSheet(); } });
+  draggable(viewer, 'both');
+</script>
+</body>
+</html>
