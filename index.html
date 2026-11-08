@@ -634,6 +634,27 @@
     #intro, #landing { transition-duration: .01s; }
     .roles ul { transition: none; }
   }
+  /* ---- All Projects cards, from Figma "New projects thumbnail image": names 30 and flush right;
+     backs with 3px edges, new washes, 11px medium tags, 0.5px dividers and the project number on top ---- */
+  @media (min-width: 761px) { .work-title { font-size: calc(30 * var(--u)); text-align: right; } }
+  .face.rear { border-width: calc(3 * var(--k)); }
+  .face.rear.service  { --edge: #eeeae4; --wash: linear-gradient(#e4d1bc, #f8f3ee); --tag: #834e17; --rule: #834e17; --num: #834e17; }
+  .face.rear.service p { color: #4d4545; }
+  .face.rear.behavior { --edge: #eeeadd; --wash: linear-gradient(#e7d8af, #fffdf2 89%); --tag: #834e17; --rule: #a97861; --num: #834e17; }
+  .face.rear.system   { --edge: #d5dcd3; --wash: linear-gradient(#c3cdc3, #f0f5ef); --tag: #4d4545; --rule: #53775c; --num: #53775c; }
+  .face.rear.branding { --edge: #e2dad2; --wash: linear-gradient(#d4a67b 6%, #fef5ea); --tag: #985c41; --rule: #c99a54; --num: #985c41; }
+  .face.rear.audit    { --edge: #cfd2d3; --wash: linear-gradient(#abafb9, #f4f5f6); --tag: #374279; --rule: #374279; --num: #374279; }
+  .face.rear ul { top: calc(287 * var(--k)); font: 500 calc(11 * var(--k))/calc(16.5 * var(--k)) 'Afacad', sans-serif; }
+  .face.rear.audit ul { top: calc(288 * var(--k)); font-weight: 400; font-size: calc(10 * var(--k)); line-height: calc(15 * var(--k)); }
+  .face.rear li + li { border-left-width: .5px; }
+  .face.rear .stat {
+    position: absolute; left: calc(var(--lx, 26) * var(--k)); top: calc(46 * var(--k)); margin: 0;
+    font: 400 calc(43 * var(--k))/calc(46 * var(--k)) 'Jost', sans-serif; letter-spacing: -.01em; color: var(--num, #834e17); white-space: nowrap;
+  }
+  .face.rear .stat-l {
+    position: absolute; left: calc(var(--lx, 26) * var(--k)); top: calc(98 * var(--k)); --n: .5;
+    font: 500 calc(11 * var(--k))/1.5 'Afacad', sans-serif; letter-spacing: .02em; color: #4d4545; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -687,7 +708,8 @@
         <div class="works-track">
           <a class="work flip" style="--i:0" href="projects/service-design-v2.html" aria-label="Service Design: offspace"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/service-design-front.jpg" alt="" width="401" height="354"></div>
-            <div class="face rear" aria-hidden="true">
+            <div class="face rear service" aria-hidden="true">
+              <b class="stat">4.5/5</b><span class="stat-l">Service experience rating</span>
               <h4>A “Personal space” to pause, recharge and regain physical and mental energy on campus.</h4>
               <p>In campus, students rush from class to studio to deadline, with nowhere to simply step out. ‘offspace’ is a service designed around that small, momentary need for personal space. A calm place to pause, reset and return to the day, to the peaceful state of mind.</p>
               <ul><li>Design research</li><li>Prototyping</li><li>Experience Design</li></ul>
@@ -696,6 +718,7 @@
           <a class="work flip" style="--i:1" href="projects/behavior-design.html" aria-label="Behavior Design: Rules, Rituals &amp; the Mid-Day Meal"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/behavior-design-front.jpg" alt="" width="401" height="354"></div>
             <div class="face rear behavior" aria-hidden="true">
+              <b class="stat">80%</b><span class="stat-l">success in hygiene practice</span>
               <h4>Nudging hygiene habits in school children around the mid-day meal</h4>
               <p>In primary schools, a rule tells children to follow hygiene practices, and a ritual reminds them, yet many still skip them. This project looks beneath the routine to understand why, and designs small, playful nudges that turn three everyday hygiene practices into habits.</p>
               <ul><li>Behavioral mapping</li><li>Design research</li><li>Product Design</li></ul>
@@ -704,6 +727,7 @@
           <a class="work flip" style="--i:2" href="projects/ecotourism.html" aria-label="System Thinking: Redefining Ecotourism"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/system-thinking-front.jpg" alt="" width="401" height="354"></div>
             <div class="face rear system" aria-hidden="true">
+              <b class="stat">100+</b><span class="stat-l">surveys and interviews across Gujarat</span>
               <h4>Even having vast biodiversity, Ecotourism contributes only 0.5% to total GDP in India</h4>
               <p>Ecotourism promises conservation, community benefit and meaningful travel, but on the ground, the gap is wide. This project maps the system around two Gujarat sites and turns the findings into a framework that helps authorities plan and measure ecotourism that works.</p>
               <ul><li>System mapping</li><li>Design research</li><li>Strategy Design</li></ul>
@@ -712,6 +736,7 @@
           <a class="work flip" style="--i:3" href="projects/product-branding.html" aria-label="Product Branding: OneByTwo"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/product-branding-front.jpg" alt="" width="401" height="354"></div>
             <div class="face rear branding" aria-hidden="true">
+              <b class="stat">≈67%</b><span class="stat-l">of the shelf price left for margins and profit</span>
               <h4>Finding the missing middle in India’s chocolate market</h4>
               <p>Indian chocolates are often too sweet or too bitter, mass-market or out-of-reach luxury. OneByTwo is a brand built for the space in between: a dark and milk blend that feels indulgent yet everyday, taken from market gap to positioning, product range and packaging.</p>
               <ul><li>Market research</li><li>Brand strategy</li><li>Packaging design</li></ul>
@@ -720,6 +745,7 @@
           <a class="work flip" style="--i:4" href="projects/design-audit.html" aria-label="Design Audit: Inside IKC (in progress)"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/design-audit-front.jpg" alt="" width="401" height="353"></div>
             <div class="face rear audit" aria-hidden="true">
+              <b class="stat">175</b><span class="stat-l">coded findings from 11 divisions</span>
               <h4>How ready is a 60-year-old family food brand for its next five years?</h4>
               <p>IKC Foods has grown on 60 years of trust, but its next chapter depends on how the organisation works every day. This immersive audit followed 11 divisions, from factory floor to store shelf, to see what people do versus say, and shaped it into opportunity areas for a future-ready IKC.</p>
               <ul><li>Ethnography</li><li>Capability mapping</li><li>Strategic Design</li></ul>
