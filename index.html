@@ -1299,18 +1299,25 @@
   const SWIPE_GAP_MS = 120;                // a pause this long, and the next scroll is a new swipe
   let pageAim = 0, page = 0, dir = 1, lastNudge = 0, lastSize = 0, holding = false;
   const FIRST_LAND = [1, 2, JOURNEY, CONTACT], landedOnce = new Set();
-  let landLock = false;
+  let landLock = false, glide = 0;
   // finger px for one step: a view is 1¼ screens; the boxes move as far as the fingers do
   const stepSpan = from => from >= WORKS && from < WORKS + 1 ? Math.max(1, worksShift()) : innerHeight * SCROLL_PER_VIEW;
   function nudge(dy) {                     // dy: px the fingers moved, + further down
     if (!dy) return;
     const now = performance.now(), d = dy > 0 ? 1 : -1, size = Math.abs(dy);
     const fresh = now - lastNudge > SWIPE_GAP_MS || d !== dir || size > lastSize * 1.5 + 2;
-    const newSwipe = now - lastNudge > SWIPE_GAP_MS || d !== dir;
+    // how strong the glide is, as a level that fades with it (halving every 220 ms);
+    // a trackpad's glide wobbles a little as it fades, but never jumps well above
+    // this level, so a clear jump means the fingers are pushing again
+    const glideNow = glide * Math.pow(.5, (now - lastNudge) / 220);
+    const pushAgain = now - lastNudge > SWIPE_GAP_MS || d !== dir || size > glideNow * 1.8 + 4;
+    // the level climbs only a third of the way to a stronger signal each time, so a
+    // swipe building up stands out from it, while the glide's own wobble doesn't
+    glide = d !== dir ? size : size > glideNow ? glideNow + (size - glideNow) * .3 : glideNow;
     lastNudge = now; lastSize = size; dir = d;  // dir: 1 on down, −1 back up
-    // after a first landing: nothing moves the page until it has arrived and the
-    // swipe that carried it there has ended (a pause, or the other way)
-    if (landLock) { if (Math.abs(pageAim - page) > .01 || !newSwipe) return; landLock = false; }
+    // after a first landing: the glide of the swipe that carried the page there is
+    // let go by; a real new push moves on, once the page has all but arrived
+    if (landLock) { if (Math.abs(pageAim - page) > .08 || !pushAgain) return; landLock = false; }
     if (holding && !fresh) return;         // the glide after reaching a view: stay on it
     holding = false;
     const before = pageAim;
