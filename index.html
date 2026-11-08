@@ -243,8 +243,8 @@
     font: 400 calc(35 * var(--u))/calc(27 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .02em;
     text-align: center; text-transform: uppercase; white-space: nowrap; transition: color .35s ease;
   }
-  .works:not(.moving) .work:hover .work-title, .work:focus-visible .work-title { color: #ebcea0; }
-  .works:not(.moving) .work:hover .work-box, .work:focus-visible .work-box { filter: brightness(.88); }
+  .work:hover .work-title, .work:focus-visible .work-title { color: #ebcea0; }
+  .work:hover .work-box, .work:focus-visible .work-box { filter: brightness(.88); }
   .work.soon { cursor: default; }
   /* a card with a thumbnail (Figma "Front of …" / "Back of …", 401 × 354): pointing
      at the box or its name, the back rises over the front like a veil, the front
@@ -260,9 +260,9 @@
     clip-path: inset(100% 0 0 0); transition: clip-path .55s cubic-bezier(.65, 0, .35, 1) .12s;
   }
   .face.rear > * { opacity: 0; translate: 0 calc(12 * var(--k)); transition: opacity .2s ease, translate .2s ease; }
-  .works:not(.moving) .work.flip:hover .face:not(.rear) img, .work.flip:focus-visible .face:not(.rear) img { transform: scale(1.06); }
-  .works:not(.moving) .work.flip:hover .face.rear, .work.flip:focus-visible .face.rear { clip-path: inset(0 0 0 0); transition-delay: 0s; }
-  .works:not(.moving) .work.flip:hover .face.rear > *, .work.flip:focus-visible .face.rear > * {
+  .work.flip:hover .face:not(.rear) img, .work.flip:focus-visible .face:not(.rear) img { transform: scale(1.06); }
+  .work.flip:hover .face.rear, .work.flip:focus-visible .face.rear { clip-path: inset(0 0 0 0); transition-delay: 0s; }
+  .work.flip:hover .face.rear > *, .work.flip:focus-visible .face.rear > * {
     opacity: 1; translate: 0 0; transition: opacity .5s ease, translate .6s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(.3s + var(--n, 0) * 80ms);
   }
   .face.rear p { --n: 1; }
@@ -1611,7 +1611,7 @@
     const was = page;
     page = reduceMotion ? pageAim : page + (pageAim - page) * (1 - Math.pow(1 - EASE_A_FRAME, dt * 60));
     if (Math.abs(pageAim - page) < .0004) page = pageAim;
-    if (page !== was) { applyPage(page); works.classList.add('moving'); }   // see the pointermove below
+    if (page !== was) applyPage(page);
     if (page > .02 && wantPower) { wantPower = 0; wake(); }
 
     // About me, in its order
@@ -1658,22 +1658,11 @@
     stripTrack.style.transform = `translateX(${((((stripX % tileW) + tileW) % tileW) - tileW).toFixed(2)}px)`;
     requestAnimationFrame(tick);
   }
-  // the project cards only turn to their back for a pointer that has moved since
-  // the page last moved: a cursor left resting where a card scrolls in under it
-  // doesn't wash the card over with its back
-  // (the browser also sends moves of its own when the page slides under a still
-  // cursor, so only a move to a new spot counts)
   // touch screens: each card's back heading, as a line under its name (shown by CSS only there)
   workLinks.forEach(w => {
     const h = w.querySelector('.face.rear h4');
     if (h) w.insertAdjacentHTML('beforeend', `<p class="work-sum" aria-hidden="true">${h.innerHTML}</p>`);
   });
-  let lastPX = -1, lastPY = -1;
-  addEventListener('pointermove', e => {
-    const moved = Math.abs(e.clientX - lastPX) + Math.abs(e.clientY - lastPY) > 2;
-    lastPX = e.clientX; lastPY = e.clientY;
-    if (moved && page === pageAim) works.classList.remove('moving');
-  }, { passive: true });
   applyPage(0);
   requestAnimationFrame(tick);
   addEventListener('resize', () => applyPage(page));
@@ -1700,7 +1689,7 @@
   // Home and About in the menu take you there
   menu.querySelector('a[href="#home"]').addEventListener('click', e => { e.preventDefault(); goTo(0); });
   menu.querySelector('a[href="#about"]').addEventListener('click', e => { e.preventDefault(); goTo(1); });
-  menu.querySelector('a[href="#projects"]').addEventListener('click', e => { e.preventDefault(); goTo(2); });
+  menu.querySelector('a[href="#projects"]').addEventListener('click', e => { e.preventDefault(); goTo(WORKS); });   // All Projects, from the first box
   menu.querySelector('a[href="#contact"]').addEventListener('click', e => { e.preventDefault(); goTo(CONTACT); });
 
   // and the monogram and the name, from any page
