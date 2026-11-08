@@ -185,6 +185,7 @@
     opacity: 0; transition: opacity .9s ease-out;
   }
   .about.show-strip .strip { opacity: 1; }
+  .about.instant, .about.instant * { transition: none !important; }
 
   /* ---------- Featured Projects (Figma "Project"; "Project Start" is where the words come from) ---------- */
   .projects { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
@@ -242,8 +243,8 @@
     font: 400 calc(35 * var(--u))/calc(27 * var(--u)) 'Afacad', system-ui, sans-serif; letter-spacing: .02em;
     text-align: center; text-transform: uppercase; white-space: nowrap; transition: color .35s ease;
   }
-  .work:hover .work-title, .work:focus-visible .work-title { color: #ebcea0; }
-  .work:hover .work-box, .work:focus-visible .work-box { filter: brightness(.88); }
+  .works:not(.moving) .work:hover .work-title, .work:focus-visible .work-title { color: #ebcea0; }
+  .works:not(.moving) .work:hover .work-box, .work:focus-visible .work-box { filter: brightness(.88); }
   .work.soon { cursor: default; }
   /* a card with a thumbnail (Figma "Front of …" / "Back of …", 401 × 354): pointing
      at the box or its name, the back rises over the front like a veil, the front
@@ -259,9 +260,9 @@
     clip-path: inset(100% 0 0 0); transition: clip-path .55s cubic-bezier(.65, 0, .35, 1) .12s;
   }
   .face.rear > * { opacity: 0; translate: 0 calc(12 * var(--k)); transition: opacity .2s ease, translate .2s ease; }
-  .work.flip:hover .face:not(.rear) img, .work.flip:focus-visible .face:not(.rear) img { transform: scale(1.06); }
-  .work.flip:hover .face.rear, .work.flip:focus-visible .face.rear { clip-path: inset(0 0 0 0); transition-delay: 0s; }
-  .work.flip:hover .face.rear > *, .work.flip:focus-visible .face.rear > * {
+  .works:not(.moving) .work.flip:hover .face:not(.rear) img, .work.flip:focus-visible .face:not(.rear) img { transform: scale(1.06); }
+  .works:not(.moving) .work.flip:hover .face.rear, .work.flip:focus-visible .face.rear { clip-path: inset(0 0 0 0); transition-delay: 0s; }
+  .works:not(.moving) .work.flip:hover .face.rear > *, .work.flip:focus-visible .face.rear > * {
     opacity: 1; translate: 0 0; transition: opacity .5s ease, translate .6s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(.3s + var(--n, 0) * 80ms);
   }
   .face.rear p { --n: 1; }
@@ -505,6 +506,13 @@
   #replay:hover { color: #ffffff; }
   #menu.on-about .replay-item { display: none; }       /* no "Replay intro" on About me and the project pages; it's back on Contact */
 
+  .work-sum { display: none; }
+  @media (hover: none) {   /* tablets: the back's heading under the card's name (phones set their own below) */
+    .work-sum {
+      display: block; position: absolute; left: 0; top: calc(424 * var(--u)); width: 100%; margin: 0;
+      font: 400 calc(15 * var(--u))/1.4 'DM Sans', system-ui, sans-serif; color: rgba(255, 255, 255, .62); text-align: center;
+    }
+  }
   /* phones: the frame is too wide to scale down, so the parts stack */
   @media (max-width: 760px) {
     #landing { --lh: 36px; --rh: 36px; --top: 36px; }
@@ -555,11 +563,21 @@
     .c-details dd { font-size: 17px; margin-top: 4px; }
     .c-foot { left: 16px; top: auto; bottom: 24px; font-size: 11px; }
 
-    /* the landing: "My domain is" on one line, the roles beside it; the photo at the foot */
-    .hello { font-size: 24px; }
+    /* the landing: "My domain is" on one line, the roles beside it; the photo at the foot,
+       tall enough to show the whole Figma frame (612 × 518), and never more than 42% of
+       the screen on short phones, where it keeps the face in view */
+    .hello { font-size: 24px; bottom: calc(var(--ph) + 100px); }
     .hello .line2 > span { white-space: nowrap; }
     .roles { min-width: 0; width: 210px; }
-    .photo { top: auto; bottom: 0; }
+    #landing { --ph: min(84.6vw, 42vh); }
+    .photo { top: auto; bottom: 0; height: var(--ph); background-position: center 12%; border-radius: 22px 0 0 0; }
+    .strip { bottom: calc(var(--ph) + 24px); }
+    /* the cards: on a touch screen the back can't be pointed at, so its heading shows under the name */
+    .works-frame { height: 340px; }
+    .work-sum {
+      position: absolute; left: 0; top: 262px; width: 100%; margin: 0;
+      font: 400 13px/18px 'DM Sans', system-ui, sans-serif; color: rgba(255, 255, 255, .62); text-align: center;
+    }
 
     /* Background: the thread runs down the left, the stops one under another in time order */
     .j-title { left: 16px; top: 122px; font-size: 34px; line-height: 40px; }
@@ -699,7 +717,7 @@
               <ul><li>Market research</li><li>Brand strategy</li><li>Packaging design</li></ul>
             </div>
           </div></div><h3 class="work-title">Product Branding</h3></a>
-          <a class="work soon flip" style="--i:4" href="#all-projects" aria-label="Design Audit: Inside IKC (coming soon)"><div class="work-box"><div class="flip-in">
+          <a class="work flip" style="--i:4" href="projects/design-audit.html" aria-label="Design Audit: Inside IKC (in progress)"><div class="work-box"><div class="flip-in">
             <div class="face"><img src="assets/thumbs/design-audit-front.jpg" alt="" width="401" height="353"></div>
             <div class="face rear audit" aria-hidden="true">
               <h4>How ready is a 60-year-old family food brand for its next five years?</h4>
@@ -1499,7 +1517,14 @@
     greet.style.visibility = g >= 1 ? 'hidden' : '';
     // the photo goes up to its About me place; About me comes up from below,
     // then both go on up and away as Featured Projects comes up after them
-    photo.style.transform = `translateY(${(-199 * smoothstep(0, 1, p) * u - p2 * innerHeight).toFixed(2)}px)`;
+    // (on a phone it stays at the foot, and moves down just enough to clear the
+    // logos under the About me text, so the two never overlap)
+    let lift = -199 * u;
+    if (phone) {
+      const logosEnd = body.offsetTop + body.offsetHeight + 18 + 48 + 14;     // where placeStrip puts the logos, and a gap
+      lift = Math.max(0, logosEnd - (innerHeight - photo.offsetHeight));
+    }
+    photo.style.transform = `translateY(${(lift * smoothstep(0, 1, p) - p2 * innerHeight).toFixed(2)}px)`;
     about.style.transform = `translateY(${((1 - p - p2) * innerHeight).toFixed(2)}px)`;
     // Featured Projects comes up, and goes on up as All Projects follows it;
     // its two words close in on the way down to it and part again leaving it
@@ -1586,11 +1611,18 @@
     const was = page;
     page = reduceMotion ? pageAim : page + (pageAim - page) * (1 - Math.pow(1 - EASE_A_FRAME, dt * 60));
     if (Math.abs(pageAim - page) < .0004) page = pageAim;
-    if (page !== was) applyPage(page);
+    if (page !== was) { applyPage(page); works.classList.add('moving'); }   // see the pointermove below
     if (page > .02 && wantPower) { wantPower = 0; wake(); }
 
     // About me, in its order
     if (!aboutOn && page > .97 && pageAim > .97) { aboutOn = true; aboutAt = now; about.classList.add('show-title', 'show-body'); }
+    // swept on past About me without stopping (a quick swipe or a menu jump): it is
+    // simply there, all of it, rather than leaving the photo on its own
+    if (!aboutOn && page > 1.02 && pageAim > 1.5) {
+      aboutOn = true; aboutAt = now - 1e6; aboutPlayed = true;
+      about.classList.add('instant', 'show-title', 'show-body', 'show-marks', 'show-strip');
+      about.offsetHeight; requestAnimationFrame(() => about.classList.remove('instant'));
+    }
     if (aboutOn && page < .5) resetAbout();
     if (aboutOn) {
       const t = now - aboutAt;
@@ -1626,6 +1658,22 @@
     stripTrack.style.transform = `translateX(${((((stripX % tileW) + tileW) % tileW) - tileW).toFixed(2)}px)`;
     requestAnimationFrame(tick);
   }
+  // the project cards only turn to their back for a pointer that has moved since
+  // the page last moved: a cursor left resting where a card scrolls in under it
+  // doesn't wash the card over with its back
+  // (the browser also sends moves of its own when the page slides under a still
+  // cursor, so only a move to a new spot counts)
+  // touch screens: each card's back heading, as a line under its name (shown by CSS only there)
+  workLinks.forEach(w => {
+    const h = w.querySelector('.face.rear h4');
+    if (h) w.insertAdjacentHTML('beforeend', `<p class="work-sum" aria-hidden="true">${h.innerHTML}</p>`);
+  });
+  let lastPX = -1, lastPY = -1;
+  addEventListener('pointermove', e => {
+    const moved = Math.abs(e.clientX - lastPX) + Math.abs(e.clientY - lastPY) > 2;
+    lastPX = e.clientX; lastPY = e.clientY;
+    if (moved && page === pageAim) works.classList.remove('moving');
+  }, { passive: true });
   applyPage(0);
   requestAnimationFrame(tick);
   addEventListener('resize', () => applyPage(page));

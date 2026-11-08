@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside IKC · Design Audit · S Monalisha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400..600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  /* The Design Audit (Inside IKC), under the Design Audit card. The study is still under
+     way, so this page says where it stands: the question, what has been done, and the
+     part that is still taking shape. In the card's colours (Figma "Design Audit back"). */
+  :root {
+    --mist: #f4f5f6; --slate: #abafb9; --navy: #374279; --ink: #2b2f45; --muted: #5d6275;
+    --line: rgba(55, 66, 121, .22);
+  }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; color: var(--ink); font-family: 'DM Sans', system-ui, sans-serif;
+    background: linear-gradient(180deg, #dfe2e8 0, var(--mist) 70vh) var(--mist);
+  }
+  a { color: inherit; }
+
+  /* the bar: back to all projects, as on the other case studies */
+  .bar { position: fixed; inset: 0 0 auto 0; z-index: 10; height: 57.6px; display: flex; align-items: center; padding: 0 36px;
+    background: rgba(244, 245, 246, .9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 1px 0 var(--line); }
+  .home { display: flex; align-items: center; gap: 12.6px; text-decoration: none; }
+  .mono { width: 36px; height: 20.7px; overflow: visible; }
+  .mono path { fill: none; stroke: var(--navy); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round; }
+  .home .sep { width: 1px; height: 16px; background: var(--line); }
+  .back { font-size: 10.8px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--navy); }
+  .home:hover .back, .home:focus-visible .back { color: var(--ink); }
+  .bar .status { margin-left: auto; font: 500 11px/1 'Afacad', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 9px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--navy); animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(55, 66, 121, .35); } 60% { opacity: .55; box-shadow: 0 0 0 7px rgba(55, 66, 121, 0); } }
+
+  main { max-width: 1160px; margin: 0 auto; padding: 128px 48px 96px; }
+
+  /* the opening: the study, its question and the picture */
+  .open { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 64px; align-items: center; }
+  .kicker { margin: 0 0 22px; font: 500 13px/1 'Afacad', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--navy); }
+  h1 { margin: 0; font: 300 clamp(48px, 6.4vw, 84px)/1 'Jost', sans-serif; letter-spacing: -.01em; }
+  .sub { margin: 14px 0 0; font: 400 18px/1.45 'Jost', sans-serif; color: var(--muted); }
+  .question { margin: 40px 0 0; padding-left: 20px; border-left: 2px solid var(--navy); font: 400 clamp(20px, 2vw, 25px)/1.35 'Jost', sans-serif; }
+  .lede { margin: 22px 0 0; max-width: 34em; font-size: 16px; line-height: 1.65; color: var(--muted); }
+  .open figure { margin: 0; }
+  .open img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 24px 60px -24px rgba(43, 47, 69, .45); }
+  .open figcaption { margin-top: 12px; font: 400 12px/1.4 'Afacad', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+  /* the line: where the study stands */
+  .now { margin: 112px 0 0; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 40px; align-items: start; }
+  .now .label { font: 500 13px/1.6 'Afacad', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--navy); padding-top: 10px; }
+  .now .label small { display: block; letter-spacing: .1em; color: var(--muted); font-weight: 400; }
+  .now p { margin: 0; font: 300 clamp(28px, 3.4vw, 44px)/1.22 'Jost', sans-serif; max-width: 21em; }
+  .now p em { font-style: normal; color: var(--navy); }
+
+  /* the three stages, as a thread: two done, the last still being worked */
+  .stages { margin: 96px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); position: relative; }
+  .stages::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1.5px; background: var(--line); }
+  .stages::after { content: ""; position: absolute; left: 0; top: 7px; height: 1.5px; width: 0; background: var(--navy); animation: thread 2.4s cubic-bezier(.3, .7, .2, 1) .3s forwards; }
+  @keyframes thread { to { width: 78%; } }
+  .stages li { position: relative; padding: 34px 32px 0 0; }
+  .stages li::before { content: ""; position: absolute; left: 0; top: 0; width: 15px; height: 15px; box-sizing: border-box; border-radius: 50%; background: var(--navy); border: 1.5px solid var(--navy); }
+  .stages li.going::before { background: var(--mist); animation: pulse 2.2s ease-in-out infinite; }
+  .stages .step { font: 500 12px/1 'Afacad', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .stages h2 { margin: 10px 0 0; font: 400 26px/1.2 'Jost', sans-serif; }
+  .stages p { margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); max-width: 22em; }
+  .stages .tag { display: inline-block; margin-top: 14px; font: 500 12px/1 'Afacad', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--navy); }
+
+  /* the fieldwork so far, in numbers */
+  .counts { margin: 96px 0 0; padding: 40px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .counts div { font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .counts b { display: block; font: 300 52px/1 'Jost', sans-serif; color: var(--ink); margin-bottom: 10px; }
+  .methods { margin: 28px 0 0; font: 400 15px/1.7 'Afacad', sans-serif; letter-spacing: .04em; color: var(--muted); }
+  .methods span + span::before { content: "·"; margin: 0 10px; color: var(--slate); }
+
+  /* close: who, and how to reach me */
+  .close { margin: 112px 0 0; display: flex; flex-wrap: wrap; gap: 40px 64px; align-items: end; justify-content: space-between; }
+  .team { font-size: 14px; line-height: 1.7; color: var(--muted); }
+  .team b { display: block; font: 500 12px/1 'Afacad', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
+  .reach { display: flex; flex-wrap: wrap; gap: 14px; }
+  .reach a { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 999px; text-decoration: none;
+    font: 500 14px/1 'DM Sans', sans-serif; transition: background .25s, color .25s, border-color .25s; }
+  .reach .primary { background: var(--navy); color: #fff; border: 1px solid var(--navy); }
+  .reach .primary:hover, .reach .primary:focus-visible { background: var(--ink); }
+  .reach .quiet { border: 1px solid var(--line); color: var(--navy); }
+  .reach .quiet:hover, .reach .quiet:focus-visible { border-color: var(--navy); }
+  .stamp { margin: 64px 0 0; font: 400 12px/1 'Afacad', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* coming in: each part rises once as it reaches the screen */
+  .rise { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
+  .rise.in { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    main { padding: 104px 22px 72px; }
+    .bar { padding: 0 16px; height: 54px; }
+    .bar .status { font-size: 10px; }
+    .open { grid-template-columns: 1fr; gap: 40px; }
+    .now { grid-template-columns: 1fr; gap: 14px; margin-top: 80px; }
+    .now .label { padding-top: 0; }
+    .stages { grid-template-columns: 1fr; gap: 36px; padding-left: 28px; margin-top: 72px; }
+    .stages::before, .stages::after { left: 7px; right: auto; top: 0; bottom: 0; width: 1.5px; height: auto; }
+    .stages::after { height: 0; bottom: auto; animation-name: thread-down; }
+    @keyframes thread-down { to { height: 74%; } }
+    .stages li { padding: 0; }
+    .stages li::before { left: -28px; }
+    .counts { grid-template-columns: repeat(2, 1fr); gap: 28px 20px; margin-top: 72px; }
+    .counts b { font-size: 42px; }
+    .close { margin-top: 80px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise { opacity: 1; transform: none; transition: none; }
+    .pulse, .stages li.going::before { animation: none; }
+    .stages::after { animation: none; width: 78%; }
+  }
+</style>
+</head>
+<body>
+  <header class="bar">
+    <a class="home" href="../index.html#all-projects" aria-label="Back to all projects">
+      <svg class="mono" aria-hidden="true"><path d="M568.1,489.7L569.6,492.0L571.6,495.0L574.3,498.4L575.8,500.2L577.3,502.0L579.1,503.5L580.8,505.0L582.6,506.4L585.9,509.0L589.3,511.1L592.8,513.2L596.2,515.1L599.8,516.8L603.6,518.3L607.5,519.6L611.2,520.6L615.1,521.5L619.1,522.2L623.2,522.7L627.5,523.2L631.7,523.2L635.8,523.3L639.8,522.9L644.0,522.5L648.2,521.8L652.4,521.0L656.5,519.8L660.5,518.4L664.4,517.0L668.1,515.3L671.9,513.3L675.6,511.2L679.1,508.7L682.4,506.1L685.3,503.3L688.1,500.5L690.8,497.4L693.2,493.8L695.5,490.1L697.3,486.1L698.7,482.2L699.9,478.4L700.4,474.6L700.6,470.5L700.3,466.3L699.6,462.3L698.3,458.5L696.5,455.0L694.5,451.8L691.9,448.8L689.0,445.8L685.5,443.1L681.7,440.9L679.8,439.8L676.1,438.0L672.4,436.6L668.5,435.3L664.5,434.2L660.5,433.2L656.4,432.4L652.3,431.4L648.3,430.7L644.3,429.8L640.4,428.9L636.4,428.0L632.4,427.0L628.5,426.0L624.7,424.8L620.8,423.3L616.9,421.6L614.9,420.6L610.9,418.5L607.8,416.4L605.2,414.3L602.6,412.1L600.2,409.6L598.1,406.8L596.4,404.1L594.7,400.4L593.4,396.6L592.7,392.7L592.6,389.0L592.9,385.2L593.8,381.3L595.1,377.4L596.9,373.7L599.0,370.2L601.3,367.2L603.6,364.7L606.2,362.1L609.2,359.5L612.5,357.2L615.9,354.9L619.6,353.0L623.2,351.3L626.8,349.8L630.6,348.4L634.6,347.4L638.6,346.4L642.7,345.7L646.8,345.2L650.9,345.1L654.9,345.1L659.1,345.2L663.2,345.8L667.4,346.4L671.4,347.3L675.4,348.5L679.2,350.0L683.1,351.2L686.7,353.1L690.2,355.0L693.8,357.1L697.2,359.4L700.4,362.0L703.5,364.5L706.5,367.3L709.3,370.0L711.9,373.0L714.5,376.2L716.9,379.4L719.3,382.7L721.5,386.1L723.7,389.6L725.9,393.4L727.7,396.5L729.6,400.0L731.4,403.7L733.4,407.2L735.2,410.8L737.1,414.2L739.0,417.8L740.8,421.5L742.8,425.1L744.3,428.3L746.2,431.9L748.2,435.6L750.1,439.2L752.0,442.8L752.4,444.8L754.7,448.3L756.6,451.9L758.4,455.3L760.2,458.5L762.1,462.1L764.2,465.9L766.2,469.6L768.2,473.3L769.9,477.0L771.4,480.5L773.0,484.1L774.3,488.0L775.1,491.9L775.7,495.9L775.9,499.6L775.4,503.4L774.4,507.3L772.8,511.1L770.8,514.7L768.3,517.6L765.3,520.1L761.7,522.1L757.7,523.8L753.6,524.5L749.7,524.7L745.9,524.4L742.0,523.5L738.4,521.7L735.2,519.7L732.5,517.7L730.2,515.0L727.9,512.0L726.0,508.6L724.6,504.8L723.5,501.2L723.0,497.3L722.9,493.3L723.1,489.1L723.9,485.0L725.2,481.3L726.5,477.8L728.1,474.4L729.9,471.0L732.0,467.5L733.2,465.6L735.6,462.2L737.7,459.2L739.9,456.1L742.3,453.2L744.9,450.0L747.3,446.8L749.8,443.5L752.2,440.4L754.4,437.6L756.5,435.3L759.0,432.3L761.4,429.1L764.0,426.0L766.6,422.8L769.3,419.5L772.0,416.1L774.6,412.8L777.1,409.7L779.6,406.5L782.0,403.4L784.6,400.1L787.2,396.9L789.9,393.7L792.4,390.4L794.9,387.2L797.5,384.0L799.9,380.9L802.4,377.7L804.0,375.7L805.4,373.8L806.8,372.0L808.2,370.2L809.6,368.4L811.0,366.7L813.6,363.4L816.2,360.2L818.7,357.5L821.0,355.0L822.6,353.3L824.6,351.5L826.4,349.9L829.4,347.6L832.0,346.1L835.1,344.8L838.6,344.4L841.8,345.1L844.2,346.8L846.2,349.5L847.8,353.6L848.4,356.7L849.0,359.8L849.1,363.4L849.3,367.5L849.3,375.0L849.3,400.9L849.3,450.3L849.3,500.0L849.3,530.6L849.2,541.7L849.1,542.8"/></svg><span class="sep"></span><span class="back">← All projects</span>
+    </a>
+    <span class="status"><i class="pulse" aria-hidden="true"></i>In progress</span>
+  </header>
+
+  <main>
+    <section class="open">
+      <div class="rise">
+        <p class="kicker">Design audit · Organisation design</p>
+        <h1>Inside IKC</h1>
+        <p class="sub">An immersive organisational design audit at IKC Foods LLP</p>
+        <p class="question">How ready is a 60-year-old family food brand for its next five years?</p>
+        <p class="lede">IKC Foods has grown on 60 years of trust, but its next chapter depends on how the organisation works every day. This audit follows the work across 11 divisions, from factory floor to store shelf, to see what people do versus say, and to shape it into opportunity areas for a future-ready IKC.</p>
+      </div>
+      <figure class="rise">
+        <img src="../assets/thumbs/design-audit-front.jpg" width="1003" height="883" alt="The organisation study at IKC: worksheets and notes on a desk in the factory office">
+        <figcaption>Fieldwork at IKC Foods, Gujarat</figcaption>
+      </figure>
+    </section>
+
+    <section class="now rise" aria-label="Where the study stands">
+      <div class="label">Where it stands<small>November 2026</small></div>
+      <p>The field is done, the synthesis is still taking shape. <em>By the time we speak, there’ll be more to show.</em></p>
+    </section>
+
+    <ol class="stages rise" aria-label="The three stages of the audit">
+      <li>
+        <span class="step">01 · Frame</span>
+        <h2>Scan the context</h2>
+        <p>Why FMCG, why IKC: the core audit question, four lenses, and the company’s history since 1965.</p>
+        <span class="tag">Done</span>
+      </li>
+      <li>
+        <span class="step">02 · Immerse</span>
+        <h2>See and sense on the floor</h2>
+        <p>Ethnography, fly-on-the-wall, sketchnoting and role-play, from inward to dispatch, plus store visits as customers.</p>
+        <span class="tag">Done</span>
+      </li>
+      <li class="going">
+        <span class="step">03 · Make sense</span>
+        <h2>Code, triangulate, synthesise</h2>
+        <p>From findings to patterns to insights, then the “How might we…” questions and opportunity areas.</p>
+        <span class="tag">Taking shape now</span>
+      </li>
+    </ol>
+
+    <section class="counts rise" aria-label="The fieldwork so far">
+      <div><b>11</b>divisions observed, inward to dispatch</div>
+      <div><b>21</b>interviews: 7 structured, 14 on the floor</div>
+      <div><b>175</b>coded findings, across 25 themes</div>
+      <div><b>6</b>key insights emerging so far</div>
+    </section>
+    <p class="methods rise"><span>Strategic design audit canvas</span><span>Capability mapping</span><span>Swimlane process map</span><span>Thematic &amp; cross-source analysis</span></p>
+
+    <section class="close rise">
+      <div class="team">
+        <b>Team</b>
+        Monalisha Sushree, Reeva Shah, Apoorva B S<br>
+        Guided by Prof. Bhavin Kothari and Prakhar Jain
+      </div>
+      <div class="reach">
+        <a class="primary" href="mailto:monalivalen@gmail.com?subject=About%20the%20IKC%20design%20audit">Ask me about it →</a>
+        <a class="quiet" href="../assets/resume/Sushree_Monalisha_Resume.pdf" target="_blank" rel="noopener">Resume</a>
+      </div>
+    </section>
+    <p class="stamp">Last updated November 2026</p>
+  </main>
+
+<script>
+  // the monogram's traced line, fitted to its box
+  {
+    const svg = document.querySelector('.mono'), b = svg.querySelector('path').getBBox(), pad = 2.5;
+    svg.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + 2 * pad} ${b.height + 2 * pad}`);
+  }
+  // each part rises in once as it reaches the screen
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.rise').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
