@@ -1333,13 +1333,19 @@
   const MAX_STEP = 90;                     // px; a mouse wheel's notch, or a sudden flick, counts as no more than this
   const SWIPE_GAP_MS = 120;                // a pause this long, and the next scroll is a new swipe
   let pageAim = 0, page = 0, dir = 1, lastNudge = 0, lastSize = 0, holding = false;
-  const FIRST_LAND = [1, BETWEEN, JOURNEY, CONTACT], landedOnce = new Set();
-  let landLock = false, glide = 0;
+  const FIRST_LAND = [1, WORKS, BETWEEN, JOURNEY, CONTACT], landedOnce = new Set();
+  let landLock = false, glide = 0, landAt = 0, gestNew = false, gestSum = 0;
+  const LAND_QUIET_MS = 180;               // after a first landing, a pause this long, and the next scroll is a new swipe
   // finger px for one step: a view is 1¼ screens; the boxes move as far as the fingers do
   const stepSpan = from => from >= WORKS && from < WORKS + 1 ? Math.max(1, worksShift()) : innerHeight * SCROLL_PER_VIEW;
   function nudge(dy) {                     // dy: px the fingers moved, + further down
     if (!dy) return;
     const now = performance.now(), d = dy > 0 ? 1 : -1, size = Math.abs(dy);
+    // a gesture starts after a quiet pause or on turning back; add up how far it goes,
+    // so a lone flicker at the end of a glide never counts as a new swipe
+    const turned = d !== dir, prevSize = lastSize;
+    if (now - lastNudge > LAND_QUIET_MS || turned) { gestNew = true; gestSum = 0; }
+    gestSum += size;
     const fresh = now - lastNudge > SWIPE_GAP_MS || d !== dir || size > lastSize * 1.5 + 2;
     // how strong the glide is, as a level that fades with it (halving every 220 ms);
     // a trackpad's glide wobbles a little as it fades, but never jumps well above
@@ -1351,8 +1357,15 @@
     glide = d !== dir ? size : size > glideNow ? glideNow + (size - glideNow) * .3 : glideNow;
     lastNudge = now; lastSize = size; dir = d;  // dir: 1 on down, −1 back up
     // after a first landing: the glide of the swipe that carried the page there is
-    // let go by; a real new push moves on, once the page has all but arrived
-    if (landLock) { if (Math.abs(pageAim - page) > .08 || !pushAgain) return; landLock = false; }
+    // let go by, however long and slowly it fades; once the page has all but
+    // arrived, only a real new swipe moves on: one that starts after a pause, goes
+    // back the other way, or jumps sharply above the scroll just before it (a
+    // glide only ever fades), and never a last flicker of a few pixels
+    if (landLock) {
+      const sharp = size > prevSize * 1.8 + 6 && now - landAt > 900;
+      if (Math.abs(pageAim - page) > .08 || !((gestNew && gestSum >= 12) || sharp)) return;
+      landLock = false;
+    }
     if (holding && !fresh) return;         // the glide after reaching a view: stay on it
     holding = false;
     const before = pageAim;
@@ -1361,7 +1374,7 @@
     // any scroll, small or large, carries the page all the way onto it (and its
     // intro plays); after that the page scrolls as far as the fingers do
     if (d > 0 && FIRST_LAND.includes(next) && !landedOnce.has(next)) {
-      landedOnce.add(next); pageAim = next; holding = true; landLock = true; return;
+      landedOnce.add(next); pageAim = next; holding = true; landLock = true; landAt = now; gestNew = false; return;
     }
     pageAim = clamp(pageAim + clamp(dy, -MAX_STEP, MAX_STEP) / stepSpan(Math.min(before, next)), 0, LAST);
     if (next >= 0 && next <= LAST && (d > 0 ? pageAim >= next : pageAim <= next)) { pageAim = next; holding = true; }
